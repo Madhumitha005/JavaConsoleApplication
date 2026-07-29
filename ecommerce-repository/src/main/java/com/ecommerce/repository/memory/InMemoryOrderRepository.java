@@ -1,3 +1,12 @@
+/*
+ * InMemoryOrderRepository.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.memory;
 
 import java.util.ArrayList;
@@ -9,17 +18,34 @@ import com.ecommerce.common.util.IdGenerator;
 import com.ecommerce.model.Order;
 import com.ecommerce.repository.OrderRepository;
 
+/**
+ * In-memory implementation of OrderRepository.
+ *
+ * This repository manages Order objects using an in-memory collection.
+ * The data is stored temporarily during application execution without
+ * connecting to an external database.
+ *
+ * Provides CRUD operations and user-based order retrieval operations.
+ */
 @Repository("inMemoryOrderRepository")
 public class InMemoryOrderRepository
         implements OrderRepository {
 
+    // Stores order objects in memory
     private final Collection<Order> orders;
 
+    // Initializes an empty order collection
     public InMemoryOrderRepository() {
 
         this.orders = new ArrayList<>();
     }
 
+    /**
+     * Saves a new order into the in-memory collection.
+     *
+     * @param order order object to be saved
+     * @return true if order is saved successfully, otherwise false
+     */
     @Override
     public boolean save(final Order order) {
 
@@ -55,6 +81,12 @@ public class InMemoryOrderRepository
         return orders.add(order);
     }
 
+    /**
+     * Updates an existing order using order id.
+     *
+     * @param order updated order object
+     * @return true if order is updated successfully, otherwise false
+     */
     @Override
     public boolean update(final Order order) {
 
@@ -101,6 +133,12 @@ public class InMemoryOrderRepository
         return false;
     }
 
+    /**
+     * Deletes an order using order id.
+     *
+     * @param orderId unique identifier of order
+     * @return true if order is deleted, otherwise false
+     */
     @Override
     public boolean delete(final int orderId) {
 
@@ -111,6 +149,12 @@ public class InMemoryOrderRepository
         return orders.removeIf(order -> order.getOrderId() == orderId);
     }
 
+    /**
+     * Finds an order using order id.
+     *
+     * @param orderId unique identifier of order
+     * @return matching Order object, otherwise null
+     */
     @Override
     public Order findById(final int orderId) {
 
@@ -128,6 +172,12 @@ public class InMemoryOrderRepository
         return null;
     }
 
+    /**
+     * Retrieves all orders belonging to a specific user.
+     *
+     * @param userId unique identifier of user
+     * @return collection of orders associated with user
+     */
     @Override
     public Collection<Order> findByUserId(final int userId) {
 
@@ -147,6 +197,11 @@ public class InMemoryOrderRepository
         return userOrders;
     }
 
+    /**
+     * Retrieves all orders stored in memory.
+     *
+     * @return collection containing all orders
+     */
     @Override
     public Collection<Order> findAll() {
 

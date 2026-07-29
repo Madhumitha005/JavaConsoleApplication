@@ -1,3 +1,12 @@
+/*
+ * JdbcCategoryRepository.java
+ *
+ * Version 1.6
+ *
+ * July 27, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.jdbc;
 
 import java.util.Collection;
@@ -12,14 +21,20 @@ import org.springframework.stereotype.Repository;
 import com.ecommerce.model.Category;
 import com.ecommerce.repository.CategoryRepository;
 
+/**
+ * JDBC implementation of the CategoryRepository interface.
+ *
+ * This class performs CRUD operations for categories
+ * using Spring JdbcTemplate.
+ */
 @Repository("jdbcCategoryRepository")
 public class JdbcCategoryRepository
         implements CategoryRepository {
 
-    // Logger
+    // Logger for this class
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcCategoryRepository.class);
 
-    // JDBC Template
+    // Spring JdbcTemplate used for database operation
     private final JdbcTemplate jdbcTemplate;
 
     // Constructor Injection
@@ -28,7 +43,7 @@ public class JdbcCategoryRepository
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Row Mapper
+    // Maps a database row to a Category object
     private final RowMapper<Category> ROW_MAPPER = (resultSet, rowNum) -> {
 
                 Category category = new Category();
@@ -39,7 +54,12 @@ public class JdbcCategoryRepository
                 return category;
             };
 
-    // Save Category
+    /**
+     * Saves a category.
+     *
+     * @param category category to save
+     * @return true if saved successfully
+     */
     @Override
     public boolean save(final Category category) {
 
@@ -68,7 +88,12 @@ public class JdbcCategoryRepository
         return false;
     }
 
-    // Update Category
+    /**
+     * Updates a category.
+     *
+     * @param category updated category
+     * @return true if updated successfully
+     */
     @Override
     public boolean update(final Category category) {
 
@@ -96,7 +121,12 @@ public class JdbcCategoryRepository
         return false;
     }
 
-    // Delete Category
+    /**
+     * Deletes a category by its ID.
+     *
+     * @param categoryId category ID
+     * @return true if deleted successfully
+     */
     @Override
     public boolean delete(final int categoryId) {
 
@@ -122,7 +152,12 @@ public class JdbcCategoryRepository
         return false;
     }
 
-    // Find Category By Id
+    /**
+     * Finds a category by its ID.
+     *
+     * @param categoryId category ID
+     * @return matching category or null
+     */
     @Override
     public Category findById(final int categoryId) {
 
@@ -146,7 +181,12 @@ public class JdbcCategoryRepository
                 : categories.getFirst();
     }
 
-    // Find category by name
+    /**
+     * Finds a category by its name.
+     *
+     * @param categoryName category name
+     * @return matching category or null
+     */
     @Override
     public Category findByName(final String categoryName) {
 
@@ -168,7 +208,11 @@ public class JdbcCategoryRepository
         return categories.isEmpty() ? null : categories.getFirst();
     }
 
-    // Find All Categories
+    /**
+     * Returns all categories.
+     *
+     * @return collection of categories
+     */
     @Override
     public Collection<Category> findAll() {
 
@@ -186,7 +230,12 @@ public class JdbcCategoryRepository
         );
     }
 
-    // Check category name exists
+    /**
+     * Checks whether a category name already exists.
+     *
+     * @param categoryName category name
+     * @return true if the category exists
+     */
     @Override
     public boolean existsByName(final String categoryName) {
 

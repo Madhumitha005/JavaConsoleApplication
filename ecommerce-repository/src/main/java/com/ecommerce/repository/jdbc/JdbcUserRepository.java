@@ -1,3 +1,12 @@
+/*
+ * JdbcUserRepository.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.jdbc;
 
 import com.ecommerce.common.enums.Role;
@@ -8,11 +17,16 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
-
+/**
+ * JDBC implementation of UserRepository.
+ *
+ * This class handles all database operations
+ * related to User entity using JdbcTemplate.
+ **/
 @Repository("jdbcUserRepository")
 public class JdbcUserRepository implements UserRepository {
 
-    // JDBC Template
+    // JDBC Template used for Db Operation
     private final JdbcTemplate jdbcTemplate;
 
     // Constructor Injection
@@ -20,7 +34,7 @@ public class JdbcUserRepository implements UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Row Mapper
+    // Maps a database row to a Product object
     private static final RowMapper<User> USER_ROW_MAPPER = (resultSet, rowNum) -> {
 
                 User user = new User();
@@ -36,7 +50,12 @@ public class JdbcUserRepository implements UserRepository {
                 return user;
             };
 
-    // Save User
+    /*
+     * Save new user into database.
+     *
+     * @param user User object
+     * @return true if inserted successfully
+     */
     @Override
     public boolean save(final User user) {
 
@@ -60,7 +79,12 @@ public class JdbcUserRepository implements UserRepository {
         ) > 0;
     }
 
-    // Update User
+    /*
+     * Update existing user details.
+     *
+     * @param user User object
+     * @return true if update successful
+     */
     @Override
     public boolean update(final User user) {
 
@@ -83,7 +107,12 @@ public class JdbcUserRepository implements UserRepository {
         ) > 0;
     }
 
-    // Delete User By UserId
+    /*
+     * Delete user using user id.
+     *
+     * @param userId User primary key
+     * @return true if deleted successfully
+     */
     @Override
     public boolean delete(final int userId) {
 
@@ -98,7 +127,12 @@ public class JdbcUserRepository implements UserRepository {
         ) > 0;
     }
 
-    // Find the User By Id
+    /*
+     * Find user by primary key.
+     *
+     * @param userId User ID
+     * @return User object if found
+     */
     @Override
     public User findById(final int userId) {
 
@@ -115,7 +149,12 @@ public class JdbcUserRepository implements UserRepository {
         ).stream().findFirst().orElse(null);
     }
 
-    // Find User By Email
+    /*
+     * Find user using email address.
+     *
+     * @param email User email
+     * @return User object if found
+     */
     @Override
     public User findByEmail(final String email) {
 
@@ -132,7 +171,12 @@ public class JdbcUserRepository implements UserRepository {
         ).stream().findFirst().orElse(null);
     }
 
-    // Find the Email is already Exists
+    /*
+     * Checks whether email already exists.
+     *
+     * @param email User email
+     * @return true if email exists
+     */
     @Override
     public boolean existsByEmail(final String email) {
 

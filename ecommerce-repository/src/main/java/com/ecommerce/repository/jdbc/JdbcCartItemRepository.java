@@ -1,3 +1,12 @@
+/*
+ * JdbcCartItemRepository.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.jdbc;
 
 import com.ecommerce.model.CartItem;
@@ -11,21 +20,31 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * JDBC implementation of the CartItemRepository interface.
+ *
+ * This class performs CRUD operations for cart items
+ * using Spring JdbcTemplate.
+ */
 @Repository("jdbcCartItemRepository")
 public class JdbcCartItemRepository implements CartItemRepository {
 
-    // Logger
+    // Logger for this class
     private final Logger LOGGER = LoggerFactory.getLogger(JdbcCartItemRepository.class);
 
-    // JDBC Template
+    // spring JDBC Template used for DB operation
     private final JdbcTemplate jdbcTemplate;
 
-    // Constructor Injection
+    /**
+     * Creates a JdbcCartItemRepository.
+     *
+     * @param jdbcTemplate JdbcTemplate instance
+     */
     public JdbcCartItemRepository(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Row Mapper - Convert Db table to Java Object
+    // Map a Database row to a CartItem Object
     private final RowMapper<CartItem> ROW_MAPPER = (resultSet, rowNum) -> {
 
         CartItem cartItem = new CartItem();
@@ -38,7 +57,12 @@ public class JdbcCartItemRepository implements CartItemRepository {
         return cartItem;
     };
 
-    // Save Cart Item
+    /**
+     * Saves a cart item.
+            *
+            * @param cartItem cart item to save
+     * @return true if saved successfully
+     */
     @Override
     public boolean save(final CartItem cartItem) {
 
@@ -60,7 +84,12 @@ public class JdbcCartItemRepository implements CartItemRepository {
         return rows > 0;
     }
 
-    // Update Cart Item
+    /**
+     * Updates the quantity of a cart item.
+     *
+     * @param cartItem updated cart item
+     * @return true if updated successfully
+     */
     @Override
     public boolean update(final CartItem cartItem) {
 
@@ -81,7 +110,12 @@ public class JdbcCartItemRepository implements CartItemRepository {
         return rows > 0;
     }
 
-    // Delete CartItem Id
+    /**
+     * Deletes a cart item by its ID.
+     *
+     * @param cartItemId cart item ID
+     * @return true if deleted successfully
+     */
     @Override
     public boolean delete(final int cartItemId) {
 
@@ -97,7 +131,12 @@ public class JdbcCartItemRepository implements CartItemRepository {
         return rows > 0;
     }
 
-    // Delete By CartId
+    /**
+     * Deletes all cart items for a cart.
+     *
+     * @param cartId cart ID
+     * @return true if deleted successfully
+     */
     @Override
     public boolean deleteByCartId(final int cartId) {
 
@@ -113,7 +152,12 @@ public class JdbcCartItemRepository implements CartItemRepository {
         return rows > 0;
     }
 
-    // Find By Id
+    /**
+     * Finds a cart item by its ID.
+     *
+     * @param cartItemId cart item ID
+     * @return matching CartItem or null
+     */
     @Override
     public CartItem findById(final int cartItemId) {
 
@@ -128,7 +172,12 @@ public class JdbcCartItemRepository implements CartItemRepository {
         return cartItems.isEmpty() ? null : cartItems.getFirst();
     }
 
-    // Find By Cart Id
+    /**
+     * Finds all items in a cart.
+     *
+     * @param cartId cart ID
+     * @return collection of cart items
+     */
     @Override
     public Collection<CartItem> findByCartId(final int cartId) {
 
@@ -145,7 +194,11 @@ public class JdbcCartItemRepository implements CartItemRepository {
         );
     }
 
-    // Find All Items In Cart
+    /**
+     * Returns all cart items.
+     *
+     * @return collection of cart items
+     */
     @Override
     public Collection<CartItem> findAll() {
 

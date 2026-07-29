@@ -1,3 +1,12 @@
+/*
+ * JdbcPaymentRepository.java
+ *
+ * Version 1.4
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.jdbc;
 
 import com.ecommerce.common.enums.PaymentMethod;
@@ -11,11 +20,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
+/**
+ * JDBC implementation of the PaymentRepository interface.
+ *
+ * Performs CRUD operations for payments
+ * using Spring JdbcTemplate.
+ */
 @Repository("jdbcPaymentRepository")
 public class JdbcPaymentRepository
         implements PaymentRepository {
 
-    // JDBC Template
+    // JDBC template used for database operation
     private final JdbcTemplate jdbcTemplate;
 
     // Constructor Injection
@@ -24,7 +39,7 @@ public class JdbcPaymentRepository
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Row Mapper
+    // Maps a database row to a Payment object
     private static final RowMapper<Payment> PAYMENT_ROW_MAPPER = (resultSet, rowNum) -> {
 
                 Payment payment = new Payment();
@@ -39,7 +54,13 @@ public class JdbcPaymentRepository
                 return payment;
             };
 
-    // Save
+    /**
+     * Saves a payment to the database.
+     *
+     * @param payment Payment to save.
+     * @return true if the payment is saved successfully;
+     *         otherwise false.
+     */
     @Override
     public boolean save(final Payment payment) {
 
@@ -93,7 +114,12 @@ public class JdbcPaymentRepository
         return rowsAffected > 0;
     }
 
-    // Find By Id
+    /**
+     * Finds a payment by its identifier.
+     *
+     * @param paymentId Payment identifier.
+     * @return Matching payment, or null if not found.
+     */
     @Override
     public Payment findById(
             final int paymentId) {
@@ -124,7 +150,12 @@ public class JdbcPaymentRepository
                 .orElse(null);
     }
 
-    // Find Payment By Order Id
+    /**
+     * Finds a payment using the order identifier.
+     *
+     * @param orderId Order identifier.
+     * @return Matching payment, or null if not found.
+     */
     @Override
     public Payment findByOrderId(final int orderId) {
 
@@ -154,7 +185,11 @@ public class JdbcPaymentRepository
                 .orElse(null);
     }
 
-    // Find All
+    /**
+     * Retrieves all payments.
+     *
+     * @return Collection of all payments.
+     */
     @Override
     public Collection<Payment> findAll() {
 
@@ -176,7 +211,13 @@ public class JdbcPaymentRepository
         );
     }
 
-    // Update
+    /**
+     * Updates an existing payment.
+     *
+     * @param payment Payment to update.
+     * @return true if the payment is updated successfully;
+     *         otherwise false.
+     */
     @Override
     public boolean update(final Payment payment) {
 
@@ -227,7 +268,13 @@ public class JdbcPaymentRepository
         return rowsAffected > 0;
     }
 
-    // Delete
+    /**
+     * Deletes a payment from the database.
+     *
+     * @param paymentId Payment identifier.
+     * @return true if the payment is deleted successfully;
+     *         otherwise false.
+     */
     @Override
     public boolean delete(final int paymentId) {
 

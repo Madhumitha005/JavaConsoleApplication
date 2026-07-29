@@ -1,3 +1,13 @@
+/*
+ * JdbcSubCategoryRepository.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
+
 package com.ecommerce.repository.jdbc;
 
 import com.ecommerce.model.Category;
@@ -10,11 +20,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
+/**
+ * JDBC implementation of SubCategoryRepository.
+ *
+ * This class handles database operations related to
+ * sub category management using JdbcTemplate.
+ */
 @Repository("jdbcSubCategoryRepository")
 public class JdbcSubCategoryRepository
         implements SubCategoryRepository {
 
-    // JDBC Template
+    // JDBC Template used for Db Operation
     private final JdbcTemplate jdbcTemplate;
 
     // Constructor Injection
@@ -23,7 +39,7 @@ public class JdbcSubCategoryRepository
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Row Mapper
+    // Maps a database row to a Product object
     private static final RowMapper<SubCategory> SUB_CATEGORY_ROW_MAPPER = (resultSet, rowNum) -> {
 
                 // Create Category Object
@@ -41,7 +57,12 @@ public class JdbcSubCategoryRepository
                 return subCategory;
             };
 
-    // Add to Sub Category
+    /**
+     * Saves a new sub category.
+     *
+     * @param subCategory sub category object
+     * @return true if saved successfully
+     */
     @Override
     public boolean save(final SubCategory subCategory) {
 
@@ -61,7 +82,12 @@ public class JdbcSubCategoryRepository
         ) > 0;
     }
 
-    // Update Sub Category
+    /**
+     * Updates existing sub category.
+     *
+     * @param subCategory sub category object
+     * @return true if updated successfully
+     */
     @Override
     public boolean update(final SubCategory subCategory) {
 
@@ -81,7 +107,12 @@ public class JdbcSubCategoryRepository
         ) > 0;
     }
 
-    // Delete Sub Category
+    /**
+     * Deletes sub category by id.
+     *
+     * @param subCategoryId sub category id
+     * @return true if deleted successfully
+     */
     @Override
     public boolean delete(final int subCategoryId) {
 
@@ -96,7 +127,12 @@ public class JdbcSubCategoryRepository
         ) > 0;
     }
 
-    // Find Sub Category By Id
+    /**
+     * Finds sub category using id.
+     *
+     * @param subCategoryId sub category id
+     * @return sub category object
+     */
     @Override
     public SubCategory findById(final int subCategoryId) {
 
@@ -126,7 +162,12 @@ public class JdbcSubCategoryRepository
                 .orElse(null);
     }
 
-    // Find category by Name
+    /**
+     * Finds sub category using name.
+     *
+     * @param subCategoryName sub category name
+     * @return sub category object
+     */
     @Override
     public SubCategory findByName(final String subCategoryName) {
 
@@ -156,7 +197,12 @@ public class JdbcSubCategoryRepository
                 .orElse(null);
     }
 
-    // Find SubCategory By Ctegory Id
+    /**
+     * Finds sub categories by category id.
+     *
+     * @param categoryId category id
+     * @return collection of sub categories
+     */
     @Override
     public Collection<SubCategory> findByCategoryId(final int categoryId) {
 
@@ -185,7 +231,11 @@ public class JdbcSubCategoryRepository
         );
     }
 
-    // Find All Sub Categories
+    /**
+     * Finds all sub categories.
+     *
+     * @return collection of sub categories
+     */
     @Override
     public Collection<SubCategory> findAll() {
 
@@ -211,7 +261,12 @@ public class JdbcSubCategoryRepository
         );
     }
 
-    // Check Sub Category name exists
+    /**
+     * Checks whether sub category name exists.
+     *
+     * @param subCategoryName sub category name
+     * @return true if exists
+     */
     @Override
     public boolean existsByName(
             final String subCategoryName) {

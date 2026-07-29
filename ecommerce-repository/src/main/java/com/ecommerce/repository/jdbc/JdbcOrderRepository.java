@@ -1,3 +1,12 @@
+/*
+ * JdbcOrderRepository.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.jdbc;
 
 import java.util.Collection;
@@ -11,11 +20,17 @@ import com.ecommerce.model.Order;
 import com.ecommerce.common.enums.OrderStatus;
 import com.ecommerce.repository.OrderRepository;
 
+/**
+ * JDBC implementation of the OrderRepository interface.
+ *
+ * This repository performs CRUD operations
+ * for orders using JdbcTemplate.
+ */
 @Repository("jdbcOrderRepository")
 public class JdbcOrderRepository
         implements OrderRepository {
 
-    // JDBC Template
+    // spring JDBC Template used for database operation
     private final JdbcTemplate jdbcTemplate;
 
     // Constructor Injection
@@ -24,7 +39,7 @@ public class JdbcOrderRepository
         this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate, "JdbcTemplate cannot be null.");
     }
 
-    // Row Mapper
+    // Maps a database row to an Order object
     private static final RowMapper<Order> ORDER_ROW_MAPPER = (resultSet, rowNum) -> {
 
                 Order order = new Order();
@@ -40,7 +55,12 @@ public class JdbcOrderRepository
                 return order;
             };
 
-    // Save Order
+    /**
+     * Saves an order into the database.
+     *
+     * @param order Order to save.
+     * @return true if saved successfully; otherwise false.
+     */
     @Override
     public boolean save(final Order order) {
 
@@ -107,7 +127,12 @@ public class JdbcOrderRepository
         return true;
     }
 
-    // Update Order
+    /**
+     * Updates an existing order.
+     *
+     * @param order Order to update.
+     * @return true if updated successfully.
+     */
     @Override
     public boolean update(final Order order) {
 
@@ -149,7 +174,13 @@ public class JdbcOrderRepository
         return rowsAffected > 0;
     }
 
-    // Delete Order
+    /**
+     * Deletes an order from the database.
+     *
+     * @param orderId Order identifier.
+     * @return true if the order is deleted;
+     *         otherwise false.
+     */
     @Override
     public boolean delete(final int orderId) {
 
@@ -168,7 +199,12 @@ public class JdbcOrderRepository
         ) > 0;
     }
 
-    // Find Order By ID
+    /**
+     * Finds an order by its identifier.
+     *
+     * @param orderId Order identifier.
+     * @return Matching order, or null if not found.
+     */
     @Override
     public Order findById(final int orderId) {
 
@@ -199,7 +235,12 @@ public class JdbcOrderRepository
                 .orElse(null);
     }
 
-    // Find Order By User ID
+    /**
+     * Finds all orders placed by a user.
+     *
+     * @param userId User identifier.
+     * @return Collection of orders.
+     */
     @Override
     public Collection<Order> findByUserId(final int userId) {
 
@@ -228,7 +269,11 @@ public class JdbcOrderRepository
         );
     }
 
-    // Find All Orders
+    /**
+     * Retrieves all orders.
+     *
+     * @return Collection of all orders.
+     */
     @Override
     public Collection<Order> findAll() {
 

@@ -1,3 +1,12 @@
+/*
+ * InMemoryOrderItemRepository.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.memory;
 
 import java.util.ArrayList;
@@ -10,17 +19,34 @@ import com.ecommerce.common.util.IdGenerator;
 import com.ecommerce.model.OrderItem;
 import com.ecommerce.repository.OrderItemRepository;
 
+/**
+ * In-memory implementation of OrderItemRepository.
+ *
+ * This repository manages OrderItem objects using an in-memory List.
+ * The data is stored temporarily during application execution without
+ * using any external database.
+ *
+ * Provides CRUD operations and order-based item retrieval operations.
+ */
 @Repository("inMemoryOrderItemRepository")
 public class InMemoryOrderItemRepository
         implements OrderItemRepository {
-    
+
+    // Stores order items in memory
     private final List<OrderItem> orderItems;
 
+    // Initializes an empty order item collection
     public InMemoryOrderItemRepository() {
 
         this.orderItems = new ArrayList<>();
     }
 
+    /**
+     * Saves a new order item into the in-memory collection.
+     *
+     * @param orderItem order item object to be saved
+     * @return true if order item is saved successfully, otherwise false
+     */
     @Override
     public boolean save(final OrderItem orderItem) {
 
@@ -49,6 +75,12 @@ public class InMemoryOrderItemRepository
         return orderItems.add(orderItem);
     }
 
+    /**
+     * Updates an existing order item using order item id.
+     *
+     * @param orderItem updated order item object
+     * @return true if order item is updated successfully, otherwise false
+     */
     @Override
     public boolean update(final OrderItem orderItem) {
 
@@ -91,6 +123,12 @@ public class InMemoryOrderItemRepository
         return false;
     }
 
+    /**
+     * Deletes an order item using order item id.
+     *
+     * @param orderItemId unique identifier of order item
+     * @return true if order item is deleted, otherwise false
+     */
     @Override
     public boolean delete(final int orderItemId) {
 
@@ -101,6 +139,12 @@ public class InMemoryOrderItemRepository
         return orderItems.removeIf(item -> item.getOrderItemId() == orderItemId);
     }
 
+    /**
+     * Deletes all order items associated with an order id.
+     *
+     * @param orderId unique identifier of order
+     * @return true if matching order items are deleted, otherwise false
+     */
     @Override
     public boolean deleteByOrderId(final int orderId) {
 
@@ -111,6 +155,13 @@ public class InMemoryOrderItemRepository
         return orderItems.removeIf(item -> item.getOrderId() == orderId);
     }
 
+
+    /**
+     * Finds an order item using order item id.
+     *
+     * @param orderItemId unique identifier of order item
+     * @return matching OrderItem object, otherwise null
+     */
     @Override
     public OrderItem findById(final int orderItemId) {
 
@@ -129,6 +180,12 @@ public class InMemoryOrderItemRepository
         return null;
     }
 
+    /**
+     * Retrieves all order items belonging to an order.
+     *
+     * @param orderId unique identifier of order
+     * @return collection of order items
+     */
     @Override
     public Collection<OrderItem> findByOrderId(final int orderId) {
 
@@ -149,6 +206,11 @@ public class InMemoryOrderItemRepository
         return result;
     }
 
+    /**
+     * Retrieves all order items stored in memory.
+     *
+     * @return collection containing all order items
+     */
     @Override
     public Collection<OrderItem> findAll() {
 

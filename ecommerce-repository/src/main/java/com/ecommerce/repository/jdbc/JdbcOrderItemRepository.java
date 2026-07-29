@@ -1,3 +1,12 @@
+/*
+ * JdbcOrderItemRepository.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.repository.jdbc;
 
 import java.util.Collection;
@@ -11,11 +20,17 @@ import org.springframework.stereotype.Repository;
 import com.ecommerce.model.OrderItem;
 import com.ecommerce.repository.OrderItemRepository;
 
+/**
+ * JDBC implementation of the OrderItemRepository interface.
+ *
+ * This class performs CRUD operations for order items
+ * using Spring JdbcTemplate.
+ * */
 @Repository("jdbcOrderItemRepository")
 public class JdbcOrderItemRepository
         implements OrderItemRepository {
 
-    //JDBC Template
+    // Spring JdbcTemplate used for database operation
     private final JdbcTemplate jdbcTemplate;
 
     // Constructor Injection
@@ -24,7 +39,7 @@ public class JdbcOrderItemRepository
         this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate, "JdbcTemplate cannot be null.");
     }
 
-    // Row Mapper
+    // Maps a database row to an OrderItem object
     private static final RowMapper<OrderItem> ORDER_ITEM_ROW_MAPPER = (resultSet, rowNum) -> {
 
                 OrderItem orderItem = new OrderItem();
@@ -38,7 +53,12 @@ public class JdbcOrderItemRepository
                 return orderItem;
             };
 
-    // Save Order Item
+    /**
+     * Saves an order item.
+     *
+     * @param orderItem order item to save
+     * @return true if saved successfully
+     */
     @Override
     public boolean save(final OrderItem orderItem) {
 
@@ -85,7 +105,12 @@ public class JdbcOrderItemRepository
         return rowsAffected > 0;
     }
 
-    // Find Order Item By ID
+    /**
+     * Finds an order item by its ID.
+     *
+     * @param orderItemId order item ID
+     * @return matching order item or null
+     */
     @Override
     public OrderItem findById(final int orderItemId) {
 
@@ -114,7 +139,12 @@ public class JdbcOrderItemRepository
                 .orElse(null);
     }
 
-    // Find Order Items By Order Id
+    /**
+     * Returns all order items for an order.
+     *
+     * @param orderId order ID
+     * @return collection of order items
+     */
     @Override
     public Collection<OrderItem> findByOrderId(final int orderId) {
 
@@ -141,7 +171,11 @@ public class JdbcOrderItemRepository
         );
     }
 
-    // Find All Items
+    /**
+     * Returns all order items.
+     *
+     * @return collection of order items
+     */
     @Override
     public Collection<OrderItem> findAll() {
 
@@ -162,7 +196,12 @@ public class JdbcOrderItemRepository
         );
     }
 
-    // Update Order Item
+    /**
+     * Updates an order item.
+     *
+     * @param orderItem updated order item
+     * @return true if updated successfully
+     */
     @Override
     public boolean update(final OrderItem orderItem) {
 
@@ -201,7 +240,12 @@ public class JdbcOrderItemRepository
         return rowsAffected > 0;
     }
 
-    // Delete Order Item
+    /**
+     * Deletes an order item by its ID.
+     *
+     * @param orderItemId order item ID
+     * @return true if deleted successfully
+     */
     @Override
     public boolean delete(final int orderItemId) {
 
@@ -223,7 +267,12 @@ public class JdbcOrderItemRepository
         return rowsAffected > 0;
     }
 
-    // Delete Order Items By Order Id
+    /**
+     * Deletes all order items for an order.
+     *
+     * @param orderId order ID
+     * @return true if deleted successfully
+     */
     @Override
     public boolean deleteByOrderId(
             final int orderId) {
