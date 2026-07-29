@@ -12,13 +12,18 @@ import java.util.Collections;
 @Service
 public class CartService {
 
+    private final CartRepository memoryRepository;
     private final CartRepository jdbcRepository;
 
     public CartService(
 
+            @Qualifier("inMemoryCartRepository")
+            final CartRepository memoryRepository,
+
             @Qualifier("jdbcCartRepository")
             final CartRepository jdbcRepository) {
 
+        this.memoryRepository = memoryRepository;
         this.jdbcRepository = jdbcRepository;
     }
 
@@ -31,19 +36,28 @@ public class CartService {
             return false;
         }
 
-        return jdbcRepository.save(cart);
+        boolean memorySaved = memoryRepository.save(cart);
+        boolean jdbcSaved = jdbcRepository.save(cart);
+
+        return memorySaved && jdbcSaved;
     }
 
 
     // Find Cart by Id
     public Cart findById(final int cartId) {
 
-        if(cartId <= 0) {
+        if (cartId <= 0) {
 
             return null;
         }
 
-        return jdbcRepository.findById(cartId);
+        Cart cart = memoryRepository.findById(cartId);
+
+        if (cart == null) {
+            cart = jdbcRepository.findById(cartId);
+        }
+
+        return cart;
     }
 
     // Find Cart by User
@@ -54,7 +68,13 @@ public class CartService {
             return null;
         }
 
-        return jdbcRepository.findByUserId(userId);
+        Cart cart = memoryRepository.findByUserId(userId);
+
+        if (cart == null) {
+            cart = jdbcRepository.findByUserId(userId);
+        }
+
+        return cart;
     }
 
     // View User Cart
@@ -65,13 +85,26 @@ public class CartService {
             return Collections.emptyList();
         }
 
-        return jdbcRepository.findByUserIdList(userId);
+
+        Collection<Cart> carts = memoryRepository.findByUserIdList(userId);
+
+        if (carts == null || carts.isEmpty()) {
+            carts = jdbcRepository.findByUserIdList(userId);
+        }
+
+        return carts;
     }
 
     // View All Cart
     public Collection<Cart> findAll() {
 
-        return jdbcRepository.findAll();
+        Collection<Cart> carts = memoryRepository.findAll();
+
+        if (carts == null || carts.isEmpty()) {
+            carts = jdbcRepository.findAll();
+        }
+
+        return carts;
     }
 
     // Update Cart
@@ -82,7 +115,10 @@ public class CartService {
             return false;
         }
 
-        return jdbcRepository.update(cart);
+        boolean memoryUpdated = memoryRepository.update(cart);
+        boolean jdbcUpdated = jdbcRepository.update(cart);
+
+        return memoryUpdated && jdbcUpdated;
     }
 
     // Delete Cart
@@ -93,6 +129,9 @@ public class CartService {
             return false;
         }
 
-        return jdbcRepository.delete(cartId);
+        boolean memoryDeleted = memoryRepository.delete(cartId);
+        boolean jdbcDeleted = jdbcRepository.delete(cartId);
+
+        return memoryDeleted && jdbcDeleted;
     }
 }
