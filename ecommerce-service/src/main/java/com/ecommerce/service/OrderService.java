@@ -127,9 +127,10 @@ public class OrderService {
 
             if (!jdbcItemSaved) {
 
-                throw new IllegalStateException("Order item could not be saved."
-                );
+                throw new IllegalStateException("Order item could not be saved.");
             }
+
+            memoryOrderItemRepository.save(item);
         }
         return true;
     }
@@ -142,12 +143,25 @@ public class OrderService {
             return Collections.emptyList();
         }
 
-        return jdbcOrderRepository.findByUserId(userId);
+        Collection<Order> orders =
+                memoryOrderRepository.findByUserId(userId);
+
+        if (orders == null || orders.isEmpty()) {
+            orders = jdbcOrderRepository.findByUserId(userId);
+        }
+
+        return orders;
     }
 
     public Collection<Order> viewOrders() {
 
-        return jdbcOrderRepository.findAll();
+        Collection<Order> orders = memoryOrderRepository.findAll();
+
+        if (orders == null || orders.isEmpty()) {
+            orders = jdbcOrderRepository.findAll();
+        }
+
+        return orders;
     }
 
     public Order findById(final int orderId) {
@@ -156,7 +170,14 @@ public class OrderService {
 
             return null;
         }
-        return jdbcOrderRepository.findById(orderId);
+
+        Order order = memoryOrderRepository.findById(orderId);
+
+        if (order == null) {
+            order = jdbcOrderRepository.findById(orderId);
+        }
+
+        return order;
     }
 
     // Update Order
@@ -174,7 +195,13 @@ public class OrderService {
             return false;
         }
 
-        return jdbcOrderRepository.update(order);
+        boolean jdbcUpdated = jdbcOrderRepository.update(order);
+
+        if (jdbcUpdated) {
+            memoryOrderRepository.update(order);
+        }
+
+        return jdbcUpdated;
     }
 
     // Customer Request Return
