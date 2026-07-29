@@ -1,8 +1,0 @@
-{
-    "java.project.sourcePaths": [
-        "src",
-        "com"
-    ],
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "java.compile.nullAnalysis.mode": "automatic"
-}

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent Project -->
+    <parent>
+        <groupId>com.ecommerce</groupId>
+        <artifactId>ecommerce-system</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>ecommerce-service</artifactId>
+    <packaging>jar</packaging>
+
+    <name>ecommerce-service</name>
+
+    <dependencies>
+
+        <!-- Model -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>ecommerce-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Repository -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>ecommerce-repository</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Common -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>ecommerce-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Boot Core -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- Spring Beans -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <!-- Spring JDBC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

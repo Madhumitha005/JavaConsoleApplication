@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent Project -->
+    <parent>
+        <groupId>com.ecommerce</groupId>
+        <artifactId>ecommerce-system</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ecommerce-view</artifactId>
+    <packaging>jar</packaging>
+
+    <name>ecommerce-view</name>
+
+    <dependencies>
+
+        <!-- Common Module -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>ecommerce-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Model Module -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>ecommerce-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Controller Module -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>ecommerce-controller</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

@@ -1,0 +1,9 @@
+com\ecommerce\service\CartService.class
+com\ecommerce\service\PaymentService.class
+com\ecommerce\service\CategoryService.class
+com\ecommerce\service\OrderItemService.class
+com\ecommerce\service\ProductService.class
+com\ecommerce\service\SubCategoryService.class
+com\ecommerce\service\CartItemService.class
+com\ecommerce\service\OrderService.class
+com\ecommerce\service\AuthService.class

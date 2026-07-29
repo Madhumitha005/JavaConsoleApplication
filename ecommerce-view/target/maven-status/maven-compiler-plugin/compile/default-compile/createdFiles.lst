@@ -1,0 +1,15 @@
+com\ecommerce\view\customer\CustomerPaymentView.class
+com\ecommerce\view\LoginView$1.class
+com\ecommerce\view\admin\AdminDashboardView.class
+com\ecommerce\view\customer\CartView.class
+com\ecommerce\view\customer\OrderView.class
+com\ecommerce\view\LoginView.class
+com\ecommerce\view\customer\CustomerDashboardView.class
+com\ecommerce\view\admin\AdminOrderView.class
+com\ecommerce\view\admin\AdminProductView.class
+com\ecommerce\view\admin\AdminCategoryView.class
+com\ecommerce\view\customer\ProductView.class
+com\ecommerce\view\admin\AdminSubCategoryView.class
+com\ecommerce\view\SignupView.class
+com\ecommerce\view\customer\CustomerCategoryView.class
+com\ecommerce\view\customer\CustomerSubCategoryView.class

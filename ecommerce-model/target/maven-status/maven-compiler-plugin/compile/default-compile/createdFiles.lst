@@ -1,0 +1,9 @@
+com\ecommerce\model\Cart.class
+com\ecommerce\model\Order.class
+com\ecommerce\model\Product.class
+com\ecommerce\model\Category.class
+com\ecommerce\model\CartItem.class
+com\ecommerce\model\OrderItem.class
+com\ecommerce\model\SubCategory.class
+com\ecommerce\model\Payment.class
+com\ecommerce\model\User.class

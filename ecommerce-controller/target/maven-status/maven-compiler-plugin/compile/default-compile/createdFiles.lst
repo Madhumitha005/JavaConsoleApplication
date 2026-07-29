@@ -1,0 +1,9 @@
+com\ecommerce\controller\OrderController.class
+com\ecommerce\controller\CategoryController.class
+com\ecommerce\controller\PaymentController.class
+com\ecommerce\controller\ProductController.class
+com\ecommerce\controller\AuthController.class
+com\ecommerce\controller\CartController.class
+com\ecommerce\controller\OrderItemController.class
+com\ecommerce\controller\CartItemController.class
+com\ecommerce\controller\SubCategoryController.class
