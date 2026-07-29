@@ -1,3 +1,12 @@
+/*
+ * CartItemService.java
+ *
+ * Version 1.6
+ *
+ * July 26, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.service;
 
 import com.ecommerce.model.CartItem;
@@ -10,13 +19,26 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Service class responsible for cart item management operations.
+ *
+ * Handles saving, updating, deleting, and retrieving cart items.
+ *
+ * This service maintains data consistency between in-memory and JDBC
+ * repository implementations.
+ */
 @Service
 public class CartItemService {
 
     private final CartItemRepository memoryRepository;
     private final CartItemRepository jdbcRepository;
 
-    // Constructor Injection
+    /**
+     * Creates CartItemService with required repository dependencies.
+     *
+     * @param memoryRepository in-memory cart item repository
+     * @param jdbcRepository JDBC cart item repository
+     */
     public CartItemService(
 
             @Qualifier("inMemoryCartItemRepository")
@@ -29,7 +51,16 @@ public class CartItemService {
         this.jdbcRepository = jdbcRepository;
     }
 
-    // Save Cart Item
+    /**
+     * Saves a new cart item.
+     *
+     * Validates cart item details and stores the item in both
+     * memory and JDBC repositories.
+     *
+     * @param cartItem cart item object to be saved
+     * @return true if cart item is saved successfully in both repositories,
+     * otherwise false
+     */
     public boolean save(final CartItem cartItem) {
 
         if (cartItem == null
@@ -46,7 +77,13 @@ public class CartItemService {
         return memorySaved && jdbcSaved;
     }
 
-    // Update Cart Item
+    /**
+     * Updates an existing cart item.
+     *
+     * @param cartItem updated cart item object
+     * @return true if cart item is updated successfully in both repositories,
+     * otherwise false
+     */
     public boolean update(final CartItem cartItem) {
 
         if (cartItem == null
@@ -62,7 +99,13 @@ public class CartItemService {
         return memoryUpdated && jdbcUpdated;
     }
 
-    // Delete Cart Item
+    /**
+     * Deletes a cart item using cart item id.
+     *
+     * @param cartItemId unique identifier of cart item
+     * @return true if cart item is deleted successfully in both repositories,
+     * otherwise false
+     */
     public boolean delete(final int cartItemId) {
 
         if (cartItemId <= 0) {
@@ -75,7 +118,13 @@ public class CartItemService {
         return memoryDeleted && jdbcDeleted;
     }
 
-    // Delete By Cart ID
+    /**
+     * Deletes all cart items associated with a cart id.
+     *
+     * @param cartId unique identifier of cart
+     * @return true if cart items are deleted successfully in both repositories,
+     * otherwise false
+     */
     public boolean deleteByCartId(final int cartId) {
 
         if (cartId <= 0) {
@@ -88,7 +137,14 @@ public class CartItemService {
         return memoryDeleted && jdbcDeleted;
     }
 
-    // Find By ID
+    /**
+     * Finds a cart item using cart item id.
+     *
+     * Searches memory repository first and JDBC repository if not found.
+     *
+     * @param cartItemId unique identifier of cart item
+     * @return matching CartItem object, otherwise null
+     */
     public CartItem findById(final int cartItemId) {
 
         if (cartItemId <= 0) {
@@ -104,7 +160,15 @@ public class CartItemService {
         return cartItem;
     }
 
-    // Find By Cart ID
+    /**
+     * Retrieves cart items using cart id.
+     *
+     * Combines results from memory and JDBC repositories
+     * while avoiding duplicate cart items.
+     *
+     * @param cartId unique identifier of cart
+     * @return collection of cart items
+     */
     public Collection<CartItem> findByCartId(final int cartId) {
 
         if (cartId <= 0) {
@@ -133,7 +197,13 @@ public class CartItemService {
         return cartItems.values();
     }
 
-    // Find All
+    /**
+     * Retrieves all cart items.
+     *
+     * Combines cart items from memory and JDBC repositories.
+     *
+     * @return collection containing all cart items
+     */
     public Collection<CartItem> findAll() {
 
         Map<Integer, CartItem> cartItems = new LinkedHashMap<>();

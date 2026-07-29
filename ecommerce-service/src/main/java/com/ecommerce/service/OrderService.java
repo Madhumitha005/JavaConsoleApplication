@@ -1,3 +1,12 @@
+/*
+ * OrderService.java
+ *
+ * Version 1.6
+ *
+ * July 28, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.service;
 
 import java.util.Collection;
@@ -15,6 +24,15 @@ import com.ecommerce.model.Product;
 import com.ecommerce.repository.OrderItemRepository;
 import com.ecommerce.repository.OrderRepository;
 import com.ecommerce.repository.ProductRepository;
+
+/** * Service class responsible for order management operations.
+ *
+ *  Handles order placement, order retrieval, order updates,
+ *
+ * customer return requests, and admin order status updates.
+ *
+ * This service maintains order data consistency between * JDBC and in-memory repository implementations.
+ * */
 
 @Service
 public class OrderService {
@@ -54,6 +72,19 @@ public class OrderService {
         this.jdbcProductRepository = Objects.requireNonNull(jdbcProductRepository, "JDBC Product Repository cannot be null.");
     }
 
+    /**
+     *  Places a new order with order items.
+     *
+     *  Validates product availability, calculates total order amount,
+     *  saves order details and associated order items.
+     *
+     *  @param order order details
+     *  @param orderItems collection of order items
+     *  @return true if order is placed successfully,
+     *
+     *   otherwise false
+     *   @throws IllegalStateException when order or order item
+     *   saving fails */
     @Transactional
     public boolean placeOrder(final Order order, final Collection<OrderItem> orderItems) {
 
@@ -135,7 +166,15 @@ public class OrderService {
         return true;
     }
 
-
+    /**
+     * Retrieves all orders belonging to a specific user.
+     *
+     * Searches data from memory repository first and then
+     * retrieves from JDBC repository if required.
+     *
+     * @param userId unique identifier of user
+     * @return collection of user orders
+     */
     public Collection<Order> viewOrders(final int userId) {
 
         if (userId <= 0) {
@@ -153,6 +192,11 @@ public class OrderService {
         return orders;
     }
 
+    /**
+     * Retrieves all orders available in the system.
+     *
+     * @return collection containing all orders
+     * */
     public Collection<Order> viewOrders() {
 
         Collection<Order> orders = memoryOrderRepository.findAll();
@@ -164,6 +208,13 @@ public class OrderService {
         return orders;
     }
 
+    /**
+     *  Finds an order using order id.
+     *
+     *  @param orderId unique identifier of order
+     *  @return matching Order object,
+     *  otherwise null
+     */
     public Order findById(final int orderId) {
 
         if (orderId <= 0) {
@@ -180,7 +231,16 @@ public class OrderService {
         return order;
     }
 
-    // Update Order
+    /**
+     * Updates an existing order.
+     *
+     * Updates order information in JDBC repository
+     * and synchronizes changes with memory repository.
+     *
+     * @param order updated order details
+     * @return true if order is updated successfully,
+     *  otherwise false
+     */
     public boolean update(final Order order) {
 
         if (order == null) {
@@ -204,7 +264,15 @@ public class OrderService {
         return jdbcUpdated;
     }
 
-    // Customer Request Return
+    /**
+     * Handles customer return request.
+     *
+     * Only delivered orders are eligible for return requests.
+     *
+     * @param orderId unique identifier of order
+     * @return true if return request is processed successfully,
+     * otherwise false
+     */
     public boolean requestReturn(final int orderId) {
 
         if (orderId <= 0) {
@@ -237,7 +305,17 @@ public class OrderService {
         return jdbcUpdated;
     }
 
-    // Admin Update Order Status
+    /**
+     * Updates order status by administrator.
+     *
+     * Allows admin to modify order status such as
+     * processing, shipped, delivered, or cancelled.
+     *
+     * @param orderId unique identifier of order
+     * @param orderStatus new order status
+     * @return true if status update is successful,
+     * otherwise false
+     */
     public boolean updateOrderStatus(final int orderId,
                                      final OrderStatus orderStatus) {
 

@@ -1,3 +1,12 @@
+/*
+ * AuthService.java
+ *
+ * Version 1.3
+ *
+ * July 25, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.service;
 
 import com.ecommerce.common.exception.AuthenticationException;
@@ -8,6 +17,15 @@ import com.ecommerce.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class responsible for user authentication operations.
+ *
+ * Handles user registration, login validation, and user retrieval
+ * using email authentication.
+ *
+ * This service works with both in-memory and JDBC repositories
+ * to maintain user data consistency.
+ */
 @Service
 public class  AuthService {
 
@@ -16,6 +34,14 @@ public class  AuthService {
     private final PasswordUtil passwordUtil;
     private final StringUtil stringUtil;
 
+    /**
+     * Creates AuthService with required dependencies.
+     *
+     * @param memoryRepository in-memory user repository
+     * @param jdbcRepository JDBC user repository
+     * @param passwordUtil password utility service
+     * @param stringUtil string utility service
+     */
     public AuthService(
 
             @Qualifier("inMemoryUserRepository")
@@ -33,7 +59,17 @@ public class  AuthService {
         this.stringUtil = stringUtil;
     }
 
-    // Signup
+    /**
+     * Registers a new user.
+     *
+     * Validates user details, cleans input data, encrypts password,
+     * checks existing users, and saves the user into repositories.
+     *
+     * @param user user object containing registration details
+     * @return true if user is successfully saved, otherwise false
+     * @throws NullPointerException if user is null
+     * @throws AuthenticationException if email already exists
+     */
     public boolean signup(final User user) {
 
         if (user == null) {
@@ -59,7 +95,17 @@ public class  AuthService {
         return memorySaved && jdbcSaved;
     }
 
-    // Login
+    /**
+     * Authenticates a user using email and password.
+     *
+     * Validates user credentials and returns authenticated user details.
+     *
+     * @param user user object containing login credentials
+     * @return authenticated User object
+     * @throws NullPointerException if user is null
+     * @throws AuthenticationException if user does not exist
+     * or password is invalid
+     */
     public User login(final User user) {
 
         if (user == null) {
@@ -86,7 +132,16 @@ public class  AuthService {
         return existingUser;
     }
 
-    // Get User By Email
+    /**
+     * Retrieves user details using email address.
+     *
+     * Searches user information from memory repository first,
+     * then JDBC repository if user is not found.
+     *
+     * @param email user email address
+     * @return matching User object, otherwise null
+     * @throws NullPointerException if email is null
+     */
     public User getUserByEmail(final String email) {
 
         if (email == null) {
