@@ -236,8 +236,7 @@ public class AdminSubCategoryView {
 
             System.out.print("Enter Category ID : ");
 
-            int categoryId =
-                    Integer.parseInt(scanner.nextLine());
+            int categoryId = Integer.parseInt(scanner.nextLine());
 
             return categoryController.getCategoryById(categoryId);
 
@@ -254,8 +253,7 @@ public class AdminSubCategoryView {
         ValidatorFactory factory =
                 Validation.buildDefaultValidatorFactory();
 
-        Validator validator =
-                factory.getValidator();
+        Validator validator = factory.getValidator();
 
         Set<ConstraintViolation<SubCategory>> violations =
                 validator.validate(subCategory);
@@ -266,8 +264,7 @@ public class AdminSubCategoryView {
             return true;
         }
 
-        for (ConstraintViolation<SubCategory> violation
-                : violations) {
+        for (ConstraintViolation<SubCategory> violation : violations) {
 
             System.out.println(
                     violation.getMessage());

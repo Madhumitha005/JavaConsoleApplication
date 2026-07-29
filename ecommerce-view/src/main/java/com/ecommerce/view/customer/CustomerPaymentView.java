@@ -3,6 +3,7 @@ package com.ecommerce.view.customer;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,7 +156,8 @@ public class CustomerPaymentView {
 
     private String generateTransactionId(final int orderId) {
 
-        return "TXN-" + orderId + "-" + System.currentTimeMillis();
+        // Universal Unique Identifier
+        return UUID.randomUUID().toString();
     }
 
     private boolean validatePayment(final Payment payment) {
