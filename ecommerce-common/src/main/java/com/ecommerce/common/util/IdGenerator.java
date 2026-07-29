@@ -71,40 +71,4 @@ public final class IdGenerator {
     public int nextPaymentId() {
         return paymentId++;
     }
-
-    public void resetUserId(final int value) {
-        userId = value;
-    }
-
-    public void resetCategoryId(final int value) {
-        categoryId = value;
-    }
-
-    public void resetSubCategoryId(final int value) {
-        subCategoryId = value;
-    }
-
-    public void resetProductId(final int value) {
-        productId = value;
-    }
-
-    public void resetCartId(final int value) {
-        cartId = value;
-    }
-
-    public void resetCartItemId(final int value) {
-        cartItemId = value;
-    }
-
-    public void resetOrderId(final int value) {
-        orderId = value;
-    }
-
-    public void resetOrderItemId(final int value) {
-        orderItemId = value;
-    }
-
-    public void resetPaymentId(final int value) {
-        paymentId = value;
-    }
 }

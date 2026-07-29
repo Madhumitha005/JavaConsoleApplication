@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthService {
+public class  AuthService {
 
     private final UserRepository memoryRepository;
     private final UserRepository jdbcRepository;

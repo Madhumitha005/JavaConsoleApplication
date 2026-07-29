@@ -41,8 +41,7 @@ public class InMemoryCartRepository implements CartRepository {
 
         for (int i = 0; i < carts.size(); i++) {
 
-            if (carts.get(i).getCartId()
-                    == cart.getCartId()) {
+            if (carts.get(i).getCartId() == cart.getCartId()) {
 
 
                 carts.set(i, cart);

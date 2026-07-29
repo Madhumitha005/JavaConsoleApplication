@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
-@ComponentScan(basePackages = "com.ecommerce") // Where to search Components
+@ComponentScan(basePackages = "com.ecommerce") // Search The Components
 @PropertySource("classpath:application.properties")
 public class AppConfig {
 

@@ -40,10 +40,7 @@ public class Main {
 
             try {
 
-                int choice =
-                        Integer.parseInt(
-                                scanner.nextLine()
-                        );
+                int choice = Integer.parseInt(scanner.nextLine());
 
                 switch (choice) {
 
