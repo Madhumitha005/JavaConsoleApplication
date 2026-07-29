@@ -39,6 +39,7 @@ public class AdminDashboardView {
             System.out.println("3. Product Management");
             System.out.println("4. View Orders");
             System.out.println("5. Logout");
+            System.out.println("---------------------------------------");
             System.out.print("Enter Choice : ");
 
             try {

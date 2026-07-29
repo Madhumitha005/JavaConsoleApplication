@@ -36,6 +36,7 @@ public class CustomerCategoryView {
             System.out.println("1. View Categories");
             System.out.println("2. Search Category");
             System.out.println("3. Back");
+            System.out.println("----------------------");
             System.out.print("Enter Choice : ");
 
             try {

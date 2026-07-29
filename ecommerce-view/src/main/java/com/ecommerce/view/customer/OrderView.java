@@ -184,6 +184,7 @@ public class OrderView {
 
             LOGGER.info("Order placed successfully. Order ID: {}", order.getOrderId());
 
+            System.out.println("===========================");
             System.out.println("\nOrder Created Successfully.");
             System.out.println("Order ID : " + order.getOrderId());
             System.out.println("Total Amount : $" + order.getTotalAmount());
@@ -198,6 +199,7 @@ public class OrderView {
 
                 LOGGER.warn("Payment failed for orderId: {}", order.getOrderId());
 
+                System.out.println("==============================");
                 System.out.println("\nPayment Failed.");
                 System.out.println("Order ID : " + order.getOrderId());
                 System.out.println("Please contact administrator.");
@@ -239,6 +241,7 @@ public class OrderView {
                 LOGGER.info("Cart cleared successfully for cartId: {}", cart.getCartId());
             }
 
+            System.out.println("-------------------------------------");
             System.out.println("ORDER PLACED SUCCESSFULLY");
             System.out.println("Order ID : " + order.getOrderId());
             System.out.println("Total Amount : $" + order.getTotalAmount());
@@ -309,6 +312,7 @@ public class OrderView {
 
             if (updated) {
 
+                System.out.println("-------------------------------------");
                 System.out.println("\nReturn Request Submitted Successfully.");
                 System.out.println("Reason : " + reason);
                 System.out.println("Status : " + order.getOrderStatus());
@@ -362,6 +366,7 @@ public class OrderView {
                             continue;
                         }
 
+                        System.out.println("====================================");
                         System.out.println("Product ID : " + item.getProductId());
                         System.out.println("Quantity   : " + item.getQuantity());
                         System.out.println("Price      : $" + item.getPrice());
@@ -391,6 +396,7 @@ public class OrderView {
             return;
         }
 
+        System.out.println("-------------------------------------");
         System.out.println("Order ID      : " + order.getOrderId());
         System.out.println("Customer Name : " + order.getCustomerName());
         System.out.println("Phone         : " + order.getPhone());

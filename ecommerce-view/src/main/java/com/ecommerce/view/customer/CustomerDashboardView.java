@@ -61,6 +61,7 @@ public class CustomerDashboardView {
             System.out.println("6. View Orders");
             System.out.println("7. Return Product");
             System.out.println("8. Logout");
+            System.out.println("----------------------------");
             System.out.print("Enter Choice : ");
 
             try {
