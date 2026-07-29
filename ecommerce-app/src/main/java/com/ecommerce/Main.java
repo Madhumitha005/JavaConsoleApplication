@@ -1,3 +1,12 @@
+/*
+ * @(#)Main.java
+ *
+ * Version 1.0
+ *
+ * July 20, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce;
 
 import java.util.Scanner;
@@ -8,6 +17,15 @@ import com.ecommerce.common.util.InputUtil;
 import com.ecommerce.config.AppConfig;
 import com.ecommerce.view.LoginView;
 import com.ecommerce.view.SignupView;
+
+
+/**
+ * Entry point of the E-Commerce System.
+ *
+ * This class initializes the Spring IoC container,
+ * loads the application configuration,
+ * and displays the main menu.
+ */
 
 public class Main {
 

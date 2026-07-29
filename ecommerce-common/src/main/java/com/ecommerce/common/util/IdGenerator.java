@@ -1,5 +1,23 @@
+/*
+ * IdGenerator.java
+ *
+ * Version 1.0
+ *
+ * July 24, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.common.util;
 
+/**
+ * Generates unique IDs for all entities in the
+ * ecommerce system.
+ *
+ * This class follows the Singleton design pattern
+ * to ensure that only one instance of the ID
+ * generator exists throughout the application.
+ *
+ */
 public final class IdGenerator {
 
     private static IdGenerator instance;
@@ -14,6 +32,9 @@ public final class IdGenerator {
     private int orderItemId;
     private int paymentId;
 
+    /**
+     * Creates an IdGenerator.
+     */
     private IdGenerator() {
 
         userId = 1;

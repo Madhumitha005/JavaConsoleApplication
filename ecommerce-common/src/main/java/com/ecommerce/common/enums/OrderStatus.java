@@ -1,7 +1,20 @@
+/*
+ * OrderStatus.java
+ *
+ * Version 1.1
+ *
+ * July 24, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.common.enums;
 
 import com.ecommerce.common.exception.ValidationException;
 
+/**
+ * Represents the different stages of an order
+ * in the E-Commerce System.
+ */
 public enum OrderStatus {
 
     PENDING(1),
@@ -30,7 +43,14 @@ public enum OrderStatus {
         return id;
     }
 
-    // Convert id from DB to Java enum
+    /**
+     * Converts a database id into the corresponding
+     * OrderStatus enum.
+            *
+            * @param id order status id
+     * @return matching OrderStatus
+     * @throws ValidationException if the id is invalid
+     */
     public static OrderStatus fromId(final int id) {
 
         for (OrderStatus status : values()) {

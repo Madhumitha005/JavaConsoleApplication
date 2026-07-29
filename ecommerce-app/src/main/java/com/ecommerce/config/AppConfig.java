@@ -10,24 +10,38 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * Application configuration class.
+ *
+ * Configures component scanning, database connection,
+ * and JDBC Template.
+ */
 @Configuration
 @ComponentScan(basePackages = "com.ecommerce") // Search The Components
 @PropertySource("classpath:application.properties")
 public class AppConfig {
 
+    // Database URL
     @Value("${db.url}")
     private String url;
 
+    // Database Uesrname
     @Value("${db.username}")
     private String username;
 
+    // Database password
     @Value("${db.password}")
     private String password;
 
+    // JDBC Driver
     @Value("${db.driver}")
     private String driver;
 
-    // Data Source To get DB Connection
+    /**
+     * Creates and returns the application's DataSource.
+     *
+     * @return configured DataSource
+     */
     @Bean
     public DataSource dataSource() {
 
@@ -39,7 +53,12 @@ public class AppConfig {
                 .build();
     }
 
-    // JDBC Template to inject Repository class
+    /**
+     * Creates a JdbcTemplate using the configured DataSource.
+     *
+             * @param dataSource application DataSource
+     * @return JdbcTemplate instance
+     */
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
 
