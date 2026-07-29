@@ -1,3 +1,12 @@
+/*
+ * CategoryController.java
+ *
+ * Version 1.3
+ *
+ * July 26, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.controller;
 
 import java.util.Collection;

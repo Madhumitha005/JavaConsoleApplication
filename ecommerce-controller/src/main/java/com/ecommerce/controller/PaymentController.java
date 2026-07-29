@@ -1,3 +1,12 @@
+/*
+ * PaymentController.java
+ *
+ * Version 1.2
+ *
+ * July 26, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.controller;
 
 import com.ecommerce.model.Payment;

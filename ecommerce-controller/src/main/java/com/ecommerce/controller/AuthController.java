@@ -1,3 +1,12 @@
+/*
+ * AuthController.java
+ *
+ * Version 1.2
+ *
+ * July 25, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.controller;
 
 import java.util.Objects;
@@ -18,7 +27,7 @@ public class AuthController {
         this.authService = Objects.requireNonNull(authService, "AuthService cannot be null");
     }
 
-    // Signup
+    // Signup User
     public boolean signup(final User user) {
 
         Objects.requireNonNull(user, "User cannot be null");
@@ -26,7 +35,7 @@ public class AuthController {
         return authService.signup(user);
     }
 
-    // Login
+    // Login User
     public User login(final User user) {
 
         Objects.requireNonNull(user, "User cannot be null");

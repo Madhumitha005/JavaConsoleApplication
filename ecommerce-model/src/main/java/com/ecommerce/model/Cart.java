@@ -1,3 +1,12 @@
+/*
+ * Cart.java
+ *
+ * Version 1.3
+ *
+ * July 25, 2026
+ *
+ * Copyright (c) 2026. All Rights Reserved.
+ */
 package com.ecommerce.model;
 
 import com.ecommerce.common.validation.CreateGroup;
