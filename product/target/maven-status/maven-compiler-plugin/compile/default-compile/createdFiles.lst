@@ -1,0 +1,10 @@
+com\ecommerce\product\dto\ProductUpdateDto.class
+com\ecommerce\product\service\ProductService.class
+com\ecommerce\product\mapper\ProductMapper.class
+com\ecommerce\product\dto\ProductResponseDto.class
+com\ecommerce\product\dto\ProductRequestDto.class
+com\ecommerce\product\repository\memory\InMemoryProductRepository.class
+com\ecommerce\product\controller\ProductController.class
+com\ecommerce\product\repository\jdbc\JdbcProductRepository.class
+com\ecommerce\product\entity\Product.class
+com\ecommerce\product\repository\ProductRepository.class

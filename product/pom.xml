@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+         http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent POM -->
+    <parent>
+
+        <groupId>com.ecommerce</groupId>
+        <artifactId>ecommerce-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../../../../../pom.xml</relativePath>
+
+    </parent>
+
+    <!-- Module name -->
+    <artifactId>product</artifactId>
+
+    <dependencies>
+
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring JDBC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Common module -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Config module -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Category module -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>category</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Subcategory module -->
+        <dependency>
+            <groupId>com.ecommerce</groupId>
+            <artifactId>subcategory</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- User module -->
+        <dependency>
+        <groupId>com.ecommerce</groupId>
+        <artifactId>user</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+
+    </dependencies>
+
+</project>

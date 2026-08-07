@@ -1,0 +1,10 @@
+com\ecommerce\cartitem\repository\CartItemRepository.class
+com\ecommerce\cartitem\controller\CartItemController.class
+com\ecommerce\cartitem\service\CartItemService.class
+com\ecommerce\cartitem\mapper\CartItemMapper.class
+com\ecommerce\cartitem\repository\jdbc\JdbcCartItemRepository.class
+com\ecommerce\cartitem\dto\CartItemUpdateDto.class
+com\ecommerce\cartitem\dto\CartItemResponseDto.class
+com\ecommerce\cartitem\entity\CartItem.class
+com\ecommerce\cartitem\dto\CartItemRequestDto.class
+com\ecommerce\cartitem\repository\memory\InMemoryCartItemRepository.class

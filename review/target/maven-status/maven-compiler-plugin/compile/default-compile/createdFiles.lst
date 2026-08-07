@@ -1,0 +1,10 @@
+com\ecommerce\review\repository\memory\InMemoryReviewRepository.class
+com\ecommerce\review\entity\Review.class
+com\ecommerce\review\dto\ReviewRequestDto.class
+com\ecommerce\review\controller\ReviewController.class
+com\ecommerce\review\repository\jdbc\JdbcReviewRepository.class
+com\ecommerce\review\repository\ReviewRepository.class
+com\ecommerce\review\mapper\ReviewMapper.class
+com\ecommerce\review\dto\ReviewUpdateDto.class
+com\ecommerce\review\dto\ReviewResponseDto.class
+com\ecommerce\review\service\ReviewService.class

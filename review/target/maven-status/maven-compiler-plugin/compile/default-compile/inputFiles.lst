@@ -1,0 +1,10 @@
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\controller\ReviewController.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\dto\ReviewRequestDto.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\dto\ReviewResponseDto.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\dto\ReviewUpdateDto.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\entity\Review.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\mapper\ReviewMapper.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\repository\jdbc\JdbcReviewRepository.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\repository\memory\InMemoryReviewRepository.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\repository\ReviewRepository.java
+D:\office\Twozo\Ecommerce\review\src\main\java\com\ecommerce\review\service\ReviewService.java

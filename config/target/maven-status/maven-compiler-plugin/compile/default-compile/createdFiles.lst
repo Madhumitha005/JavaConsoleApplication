@@ -1,0 +1,2 @@
+com\ecommerce\config\SecurityConfig.class
+com\ecommerce\config\CorsConfig.class

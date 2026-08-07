@@ -1,0 +1,10 @@
+com\ecommerce\orderitem\dto\OrderItemResponseDto.class
+com\ecommerce\orderitem\dto\OrderItemRequestDto.class
+com\ecommerce\orderitem\mapper\OrderItemMapper.class
+com\ecommerce\orderitem\entity\OrderItem.class
+com\ecommerce\orderitem\repository\jdbc\JdbcOrderItemRepository.class
+com\ecommerce\orderitem\repository\OrderItemRepository.class
+com\ecommerce\orderitem\service\OrderItemService.class
+com\ecommerce\orderitem\controller\OrderItemController.class
+com\ecommerce\orderitem\repository\memory\InMemoryOrderItemRepository.class
+com\ecommerce\orderitem\dto\OrderItemUpdateDto.class

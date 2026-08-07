@@ -1,0 +1,11 @@
+com\ecommerce\user\dto\SignupRequestDto.class
+com\ecommerce\user\dto\UserUpdateDto.class
+com\ecommerce\user\entity\User.class
+com\ecommerce\user\repository\UserRepository.class
+com\ecommerce\user\dto\LoginRequestDto.class
+com\ecommerce\user\controller\AuthController.class
+com\ecommerce\user\mapper\UserMapper.class
+com\ecommerce\user\dto\UserResponseDto.class
+com\ecommerce\user\repository\jdbc\JdbcUserRepository.class
+com\ecommerce\user\service\AuthService.class
+com\ecommerce\user\repository\memory\InMemoryUserRepository.class

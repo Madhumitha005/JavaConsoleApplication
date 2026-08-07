@@ -1,0 +1,10 @@
+com\ecommerce\category\mapper\CategoryMapper.class
+com\ecommerce\category\service\CategoryService.class
+com\ecommerce\category\repository\CategoryRepository.class
+com\ecommerce\category\dto\CategoryRequestDto.class
+com\ecommerce\category\entity\Category.class
+com\ecommerce\category\dto\CategoryResponseDto.class
+com\ecommerce\category\dto\CategoryUpdateDto.class
+com\ecommerce\category\repository\memory\InMemoryCategoryRepository.class
+com\ecommerce\category\controller\CategoryController.class
+com\ecommerce\category\repository\jdbc\JdbcCategoryRepository.class
