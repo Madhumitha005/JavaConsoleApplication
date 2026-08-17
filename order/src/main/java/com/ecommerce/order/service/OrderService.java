@@ -17,6 +17,9 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
 import com.ecommerce.common.enums.OrderStatus;
 import com.ecommerce.common.enums.PaymentStatus;
@@ -63,6 +66,11 @@ public class OrderService {
     }
 
     // Places new order
+    @Caching(evict = {
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "ordersByUser", key = "#order.userId"),
+            @CacheEvict(value = "ordersBySeller", key = "#order.sellerId")
+    })
     public boolean placeOrder(
             final Order order,
             final Collection<OrderItem> orderItems) {
@@ -153,6 +161,7 @@ public class OrderService {
     }
 
     // Find order by id
+    @Cacheable(value = "ordersById", key = "#orderId")
     public Order findById(final Integer orderId) {
 
         Order order = memoryOrderRepository.findById(orderId);
@@ -166,12 +175,14 @@ public class OrderService {
     }
 
     // Find all orders
+    @Cacheable(value = "orders", key = "'all'")
     public Collection<Order> findAll() {
 
         return jdbcOrderRepository.findAll();
     }
 
     // Find orders by user
+    @Cacheable(value = "ordersByUser", key = "#userId")
     public Collection<Order> findByUserId(final Integer userId) {
 
         Collection<Order> orders = memoryOrderRepository.findByUserId(userId);
@@ -185,6 +196,12 @@ public class OrderService {
     }
 
     // Update order
+    @Caching(evict = {
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "ordersById", key = "#order.orderId"),
+            @CacheEvict(value = "ordersByUser", allEntries = true),
+            @CacheEvict(value = "ordersBySeller", allEntries = true)
+    })
     public boolean update(final Order order) {
 
         boolean updated = jdbcOrderRepository.update(order);
@@ -198,6 +215,12 @@ public class OrderService {
     }
 
     // Update order status
+    @Caching(evict = {
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "ordersById", key = "#orderId"),
+            @CacheEvict(value = "ordersByUser", allEntries = true),
+            @CacheEvict(value = "ordersBySeller", allEntries = true)
+    })
     public boolean updateOrderStatus(
             final Integer orderId,
             final OrderStatus orderStatus) {
@@ -214,6 +237,12 @@ public class OrderService {
     }
 
     // Delete order
+    @Caching(evict = {
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "ordersById", key = "#orderId"),
+            @CacheEvict(value = "ordersByUser", allEntries = true),
+            @CacheEvict(value = "ordersBySeller", allEntries = true)
+    })
     public boolean delete(final Integer orderId) {
 
         boolean deleted = jdbcOrderRepository.delete(orderId);
@@ -226,6 +255,7 @@ public class OrderService {
         return deleted;
     }
 
+    @Cacheable(value = "ordersBySeller", key = "#sellerId")
     public Collection<Order> findBySellerId(
             final Integer sellerId) {
 

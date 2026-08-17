@@ -28,6 +28,12 @@
             <artifactId>spring-jdbc</artifactId>
         </dependency>
 
+        <!-- Spring Cache -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+
         <!-- Jakarta Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>

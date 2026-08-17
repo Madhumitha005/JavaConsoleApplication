@@ -61,6 +61,12 @@
             <artifactId>spring-tx</artifactId>
         </dependency>
 
+        <!-- Spring Context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
         <!-- Jakarta Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>

@@ -18,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
 import com.ecommerce.category.entity.Category;
 import com.ecommerce.category.repository.CategoryRepository;
@@ -41,6 +44,7 @@ public class CategoryService {
         this.jdbcRepository = Objects.requireNonNull(jdbcRepository, "JDBC repository cannot be null.");
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     public boolean addCategory(final Category category) {
 
         Objects.requireNonNull(category, "Category cannot be null.");
@@ -65,11 +69,13 @@ public class CategoryService {
         return memorySaved && jdbcSaved;
     }
 
+    @Cacheable(value = "categories", key = "'all'")
     public Collection<Category> getAllCategories() {
 
         return jdbcRepository.findAll();
     }
 
+    @Cacheable(value = "categoryById", key = "#categoryId")
     public Category getCategoryById(final Integer categoryId) {
 
         Objects.requireNonNull(categoryId, "Category ID cannot be null.");
@@ -83,6 +89,7 @@ public class CategoryService {
         return category;
     }
 
+    @Cacheable(value = "categoryByName", key = "#categoryName")
     public Category getCategoryByName(final String categoryName) {
 
         Objects.requireNonNull(categoryName, "Category name cannot be null.");
@@ -96,6 +103,14 @@ public class CategoryService {
         return category;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "categories", allEntries = true),
+            @CacheEvict(
+                    value = "categoryById",
+                    key = "#category.categoryId"
+            ),
+            @CacheEvict(value = "categoryByName", allEntries = true)
+    })
     public boolean updateCategory(final Category category) {
 
         Objects.requireNonNull(category, "Category cannot be null.");
@@ -110,6 +125,14 @@ public class CategoryService {
         return memoryUpdated || jdbcUpdated;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "categories", allEntries = true),
+            @CacheEvict(
+                    value = "categoryById",
+                    key = "#categoryId"
+            ),
+            @CacheEvict(value = "categoryByName", allEntries = true)
+    })
     public boolean deleteCategory(final Integer categoryId) {
 
         Objects.requireNonNull(categoryId, "Category ID cannot be null.");

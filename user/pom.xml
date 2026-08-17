@@ -13,6 +13,7 @@
         <groupId>com.ecommerce</groupId>
         <artifactId>ecommerce-parent</artifactId>
         <version>1.0.0</version>
+
     </parent>
 
     <artifactId>user</artifactId>
@@ -50,6 +51,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <!-- PostgreSQL -->

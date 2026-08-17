@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
 import com.ecommerce.product.entity.Product;
 import com.ecommerce.product.repository.ProductRepository;
@@ -33,6 +36,10 @@ public class ProductService {
         this.jdbcRepository = Objects.requireNonNull(jdbcRepository, "JDBC repository cannot be null.");
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "productsBySeller", allEntries = true)
+    })
     public boolean save(final Product product) {
 
         Objects.requireNonNull(product, "Product cannot be null.");
@@ -76,6 +83,12 @@ public class ProductService {
         return true;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "productsById", key = "#product.productId"),
+            @CacheEvict(value = "productsByName", allEntries = true),
+            @CacheEvict(value = "productsBySeller", allEntries = true)
+    })
     public boolean update(final Product product) {
 
         Objects.requireNonNull(product, "Product cannot be null.");
@@ -98,6 +111,12 @@ public class ProductService {
         return memoryUpdated || jdbcUpdated;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "productsById", key = "#productId"),
+            @CacheEvict(value = "productsByName", allEntries = true),
+            @CacheEvict(value = "productsBySeller", allEntries = true)
+    })
     public boolean delete(final Integer productId) {
 
         Objects.requireNonNull(productId, "Product ID cannot be null.");
@@ -108,6 +127,7 @@ public class ProductService {
         return memoryDeleted || jdbcDeleted;
     }
 
+    @Cacheable(value = "productsById", key = "#productId")
     public Product findById(final Integer productId) {
 
         Objects.requireNonNull(productId, "Product ID cannot be null.");
@@ -122,6 +142,7 @@ public class ProductService {
         return product;
     }
 
+    @Cacheable(value = "productsByName", key = "#productName")
     public Product findByName(final String productName) {
 
         Objects.requireNonNull(productName, "Product name cannot be null.");
@@ -136,6 +157,7 @@ public class ProductService {
         return product;
     }
 
+    @Cacheable(value = "products", key = "'all'")
     public Collection<Product> findAll() {
 
         Map<Integer, Product> products = new LinkedHashMap<>();
@@ -156,6 +178,12 @@ public class ProductService {
         return product != null && product.getQuantity() >= quantity;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "productsById", key = "#productId"),
+            @CacheEvict(value = "productsByName", allEntries = true),
+            @CacheEvict(value = "productsBySeller", allEntries = true)
+    })
     public boolean reduceStock(
             final Integer productId,
             final Integer quantity) {
@@ -163,13 +191,10 @@ public class ProductService {
         Product product = findById(productId);
 
         if (product == null) {
-
             return false;
         }
 
-        if (product.getQuantity()
-                < quantity) {
-
+        if (product.getQuantity() < quantity) {
             return false;
         }
 
@@ -179,6 +204,7 @@ public class ProductService {
         return update(product);
     }
 
+    @Cacheable(value = "productsBySeller", key = "#sellerId")
     public Collection<Product> findBySellerId(final Integer sellerId) {
 
         Collection<Product> products = memoryRepository.findBySellerId(sellerId);

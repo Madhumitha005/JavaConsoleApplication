@@ -1,11 +1,11 @@
 -- Drop table
 DROP TABLE IF EXISTS order_item;
-DROP TABLE IF EXISTS "order";
 DROP TABLE IF EXISTS cart_item;
+DROP TABLE IF EXISTS review;
+DROP TABLE IF EXISTS "order";
 DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS sub_category;
 DROP TABLE IF EXISTS category;
-DROP TABLE IF EXISTS review;
 DROP TABLE IF EXISTS "user";
 
 -- User Table

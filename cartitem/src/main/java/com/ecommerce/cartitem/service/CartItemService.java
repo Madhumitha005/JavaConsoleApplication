@@ -14,6 +14,9 @@ import com.ecommerce.cartitem.repository.CartItemRepository;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +41,11 @@ public class CartItemService {
         this.jdbcRepository = jdbcRepository;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "allCartItems", allEntries = true),
+            @CacheEvict(value = "userCartItems",
+                    key = "#cartItem.userId")
+    })
     public boolean save(final CartItem cartItem) {
 
         if (cartItem == null
@@ -54,6 +62,14 @@ public class CartItemService {
         return memorySaved && jdbcSaved;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "cartItems",
+                    key = "#cartItem.cartItemId"),
+            @CacheEvict(value = "userCartItems",
+                    key = "#cartItem.userId"),
+            @CacheEvict(value = "allCartItems",
+                    allEntries = true)
+    })
     public boolean update(final CartItem cartItem) {
 
         if (cartItem == null
@@ -69,6 +85,14 @@ public class CartItemService {
         return memoryUpdated && jdbcUpdated;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "cartItems",
+                    key = "#cartItemId"),
+            @CacheEvict(value = "allCartItems",
+                    allEntries = true),
+            @CacheEvict(value = "userCartItems",
+                    allEntries = true)
+    })
     public boolean delete(final int cartItemId) {
 
         if (cartItemId <= 0) {
@@ -81,6 +105,12 @@ public class CartItemService {
         return memoryDeleted && jdbcDeleted;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "userCartItems",
+                    key = "#userId"),
+            @CacheEvict(value = "allCartItems",
+                    allEntries = true)
+    })
     public boolean deleteByUserId(final int userId) {
 
         if (userId <= 0) {
@@ -93,6 +123,7 @@ public class CartItemService {
         return memoryDeleted && jdbcDeleted;
     }
 
+    @Cacheable(value = "cartItems", key = "#cartItemId")
     public CartItem findById(final int cartItemId) {
 
         if (cartItemId <= 0) {
@@ -109,6 +140,7 @@ public class CartItemService {
         return cartItem;
     }
 
+    @Cacheable(value = "userCartItems", key = "#userId")
     public Collection<CartItem> findByUserId(final int userId) {
 
         if (userId <= 0) {
@@ -139,6 +171,7 @@ public class CartItemService {
         return cartItems.values();
     }
 
+    @Cacheable(value = "allCartItems")
     public Collection<CartItem> findAll() {
 
         Map<Integer, CartItem> cartItems = new LinkedHashMap<>();

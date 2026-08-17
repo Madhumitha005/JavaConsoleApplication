@@ -14,6 +14,9 @@ import com.ecommerce.orderitem.repository.OrderItemRepository;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
 import java.util.Collection;
 
@@ -42,6 +45,11 @@ public class OrderItemService {
     }
 
      // Adds a new order item
+     @Caching(evict = {
+             @CacheEvict(value = "orderItems", allEntries = true),
+             @CacheEvict(value = "orderItemsByOrder",
+                     key = "#orderItem.orderId")
+     })
     public boolean addOrderItem(final OrderItem orderItem) {
 
         if (orderItem == null) {
@@ -70,6 +78,10 @@ public class OrderItemService {
     }
 
     // Adds multiple order items
+    @Caching(evict = {
+            @CacheEvict(value = "orderItems", allEntries = true),
+            @CacheEvict(value = "orderItemsByOrder", allEntries = true)
+    })
     public boolean addOrderItems(final Collection<OrderItem> orderItems) {
 
         if (orderItems == null || orderItems.isEmpty()) {
@@ -90,6 +102,7 @@ public class OrderItemService {
     }
 
     // Retrieves an order item using order item id
+    @Cacheable(value = "orderItemsById", key = "#orderItemId")
     public OrderItem getOrderItemById(final int orderItemId) {
 
         if (orderItemId <= 0) {
@@ -106,6 +119,7 @@ public class OrderItemService {
     }
 
     // Retrieves all order items belonging to an order
+    @Cacheable(value = "orderItemsByOrder", key = "#orderId")
     public Collection<OrderItem> getOrderItemsByOrderId(final int orderId) {
 
         if (orderId <= 0) {
@@ -116,12 +130,20 @@ public class OrderItemService {
         return jdbcRepository.findByOrderId(orderId);
     }
 
+    @Cacheable(value = "orderItems", key = "'all'")
     public Collection<OrderItem> getAllOrderItems() {
 
         return jdbcRepository.findAll();
     }
 
     // Updates an existing order item
+    @Caching(evict = {
+            @CacheEvict(value = "orderItems", allEntries = true),
+            @CacheEvict(value = "orderItemsById",
+                    key = "#orderItem.orderItemId"),
+            @CacheEvict(value = "orderItemsByOrder",
+                    key = "#orderItem.orderId")
+    })
     public boolean updateOrderItem(final OrderItem orderItem) {
 
         if (orderItem == null) {
@@ -144,6 +166,13 @@ public class OrderItemService {
     }
 
     // Retrieves all order items
+    @Caching(evict = {
+            @CacheEvict(value = "orderItems", allEntries = true),
+            @CacheEvict(value = "orderItemsById",
+                    key = "#orderItemId"),
+            @CacheEvict(value = "orderItemsByOrder",
+                    allEntries = true)
+    })
     public boolean deleteOrderItem(final int orderItemId) {
 
         if (orderItemId <= 0) {
@@ -162,6 +191,13 @@ public class OrderItemService {
     }
 
     // Deletes an order item using order item id
+    @Caching(evict = {
+            @CacheEvict(value = "orderItems", allEntries = true),
+            @CacheEvict(value = "orderItemsByOrder",
+                    key = "#orderId"),
+            @CacheEvict(value = "orderItemsById",
+                    allEntries = true)
+    })
     public boolean deleteOrderItemsByOrderId(final int orderId) {
 
         if (orderId <= 0) {
