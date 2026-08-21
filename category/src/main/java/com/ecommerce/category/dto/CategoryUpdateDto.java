@@ -1,9 +1,9 @@
 /*
  * CategoryUpdateDto.java
  *
- * Version 1.0
+ * Version 1.1
  *
- * July 30, 2026
+ * August 21, 2026
  *
  * Copyright (c) 2026.
  * All Rights Reserved.
@@ -11,7 +11,6 @@
 package com.ecommerce.category.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -20,12 +19,6 @@ import jakarta.validation.constraints.Size;
  * category update requests.
  */
 public class CategoryUpdateDto {
-
-    // Category id
-    @NotNull(
-            message = "Category ID is required."
-    )
-    private Integer categoryId;
 
     // Category name
     @NotBlank(
@@ -50,23 +43,9 @@ public class CategoryUpdateDto {
 
     // Parameterized constructor
     public CategoryUpdateDto(
-            final Integer categoryId,
             final String categoryName) {
 
-        this.categoryId = categoryId;
         this.categoryName = categoryName;
-    }
-
-    // Returns the category id
-    public Integer getCategoryId() {
-
-        return categoryId;
-    }
-
-    // Sets the category id
-    public void setCategoryId(final Integer categoryId) {
-
-        this.categoryId = categoryId;
     }
 
     // Returns the category name
@@ -76,7 +55,8 @@ public class CategoryUpdateDto {
     }
 
     // Sets the category name
-    public void setCategoryName(final String categoryName) {
+    public void setCategoryName(
+            final String categoryName) {
 
         this.categoryName = categoryName;
     }
@@ -85,9 +65,7 @@ public class CategoryUpdateDto {
     public String toString() {
 
         return "CategoryUpdateDto{"
-                + "categoryId="
-                + categoryId
-                + ", categoryName='"
+                + "categoryName='"
                 + categoryName
                 + '\''
                 + '}';

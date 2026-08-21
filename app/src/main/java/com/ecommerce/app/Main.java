@@ -12,12 +12,15 @@ package com.ecommerce.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
+
 /**
  * Entry point of the E-Commerce application.
  * This class initializes the Spring Boot application.
  */
 @SpringBootApplication(scanBasePackages = "com.ecommerce")
+@EntityScan(basePackages = "com.ecommerce")
 @EnableCaching
 public class Main {
 

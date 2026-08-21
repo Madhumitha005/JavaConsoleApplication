@@ -1,196 +1,134 @@
-
 package com.ecommerce.review.service;
 
 import java.util.Collection;
 import java.util.Collections;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.ecommerce.review.entity.Review;
 import com.ecommerce.review.repository.ReviewRepository;
 
 @Service
+@Transactional
 public class ReviewService {
 
-    private final ReviewRepository memoryRepository;
-    private final ReviewRepository jdbcRepository;
+    private final ReviewRepository reviewRepository;
 
     public ReviewService(
+            final ReviewRepository reviewRepository) {
 
-            @Qualifier("inMemoryReviewRepository")
-            final ReviewRepository memoryRepository,
-
-            @Qualifier("jdbcReviewRepository")
-            final ReviewRepository jdbcRepository) {
-
-        this.memoryRepository = memoryRepository;
-        this.jdbcRepository = jdbcRepository;
+        this.reviewRepository = reviewRepository;
     }
 
-    // Saves a review and clears review-related caches
-    @CacheEvict(
-            cacheNames = {
-                    "reviews",
-                    "reviewsByProduct",
-                    "reviewsByCustomer",
-                    "reviewReplies",
-                    "allReviews"
-            },
-            allEntries = true,
-            condition = "#result == true"
-    )
+    // Save review
+    @Caching(evict = {
+            @CacheEvict(value = "reviews", allEntries = true),
+            @CacheEvict(value = "reviewsByProduct", allEntries = true),
+            @CacheEvict(value = "reviewsByCustomer", allEntries = true),
+            @CacheEvict(value = "reviewReplies", allEntries = true),
+            @CacheEvict(value = "allReviews", allEntries = true)
+    })
     public boolean save(final Review review) {
 
         if (review == null) {
             return false;
         }
-
-        boolean jdbcSaved = jdbcRepository.save(review);
-
-        if (jdbcSaved) {
-
-            memoryRepository.save(review);
-        }
-
-        return jdbcSaved;
+        return reviewRepository.save(review);
     }
 
-    // Updates a review and clears old cached data
-    @CacheEvict(
-            cacheNames = {
-                    "reviews",
-                    "reviewsByProduct",
-                    "reviewsByCustomer",
-                    "reviewReplies",
-                    "allReviews"
-            },
-            allEntries = true,
-            condition = "#result == true"
-    )
+    // Update review
+    @Caching(evict = {
+            @CacheEvict(value = "reviews", allEntries = true),
+            @CacheEvict(value = "reviewsByProduct", allEntries = true),
+            @CacheEvict(value = "reviewsByCustomer", allEntries = true),
+            @CacheEvict(value = "reviewReplies", allEntries = true),
+            @CacheEvict(value = "allReviews", allEntries = true)
+    })
     public boolean update(final Review review) {
 
-        if (review == null) {
+        if (review == null
+                || review.getReviewId() <= 0) {
+
             return false;
         }
-
-        boolean jdbcUpdated = jdbcRepository.update(review);
-
-        if (jdbcUpdated) {
-
-            memoryRepository.update(review);
-        }
-
-        return jdbcUpdated;
+        return reviewRepository.update(review);
     }
 
-    // Deletes a review and clears related caches
-    @CacheEvict(
-            cacheNames = {
-                    "reviews",
-                    "reviewsByProduct",
-                    "reviewsByCustomer",
-                    "reviewReplies",
-                    "allReviews"
-            },
-            allEntries = true,
-            condition = "#result == true"
-    )
+    // Delete review
+    @Caching(evict = {
+            @CacheEvict(value = "reviews", key = "#reviewId"),
+            @CacheEvict(value = "reviewsByProduct", allEntries = true),
+            @CacheEvict(value = "reviewsByCustomer", allEntries = true),
+            @CacheEvict(value = "reviewReplies", allEntries = true),
+            @CacheEvict(value = "allReviews", allEntries = true)
+    })
     public boolean delete(final Integer reviewId) {
 
         if (reviewId == null || reviewId <= 0) {
-
             return false;
         }
-
-        boolean jdbcDeleted = jdbcRepository.delete(reviewId);
-
-        if (jdbcDeleted) {
-
-            memoryRepository.delete(reviewId);
-        }
-
-        return jdbcDeleted;
+        return reviewRepository.delete(reviewId);
     }
 
-    // Finds a review by ID using Redis cache
+    // Find review by ID
     @Cacheable(
             value = "reviews",
-            key = "#reviewId"
-    )
+            key = "#reviewId")
     public Review findById(final Integer reviewId) {
 
         if (reviewId == null || reviewId <= 0) {
-
             return null;
         }
-
-        Review review = memoryRepository.findById(reviewId);
-
-        if (review == null) {
-
-            review = jdbcRepository.findById(reviewId);
-        }
-
-        return review;
+        return reviewRepository.findById(reviewId);
     }
 
-    // Finds reviews by product ID using Redis cache
+    // Find reviews by product
     @Cacheable(
             value = "reviewsByProduct",
-            key = "#productId"
-    )
+            key = "#productId")
     public Collection<Review> findByProductId(
             final Integer productId) {
 
         if (productId == null || productId <= 0) {
-
             return Collections.emptyList();
         }
-
-        return jdbcRepository.findByProductId(productId);
+        return reviewRepository.findByProductId(productId);
     }
 
-    // Finds reviews by customer ID using Redis cache
+    // Find reviews by customer
     @Cacheable(
             value = "reviewsByCustomer",
-            key = "#customerId"
-    )
+            key = "#customerId")
     public Collection<Review> findByCustomerId(
             final Integer customerId) {
 
         if (customerId == null || customerId <= 0) {
-
             return Collections.emptyList();
         }
-
-        return jdbcRepository.findByCustomerId(customerId);
+        return reviewRepository.findByCustomerId(customerId);
     }
 
-    // Finds replies for a review using Redis cache
+    // Find replies
     @Cacheable(
             value = "reviewReplies",
-            key = "#reviewId"
-    )
+            key = "#reviewId")
     public Collection<Review> findReplies(
             final Integer reviewId) {
 
         if (reviewId == null || reviewId <= 0) {
-
             return Collections.emptyList();
         }
-
-        return jdbcRepository.findReplies(reviewId);
+        return reviewRepository.findReplies(reviewId);
     }
 
-    // Finds all reviews using Redis cache
+    // Find all reviews
     @Cacheable(
-            value = "allReviews"
-    )
+            value = "allReviews",
+            key = "'all'")
     public Collection<Review> findAll() {
 
-        return jdbcRepository.findAll();
+        return reviewRepository.findAll();
     }
 }

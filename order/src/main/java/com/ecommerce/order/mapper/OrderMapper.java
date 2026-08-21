@@ -23,7 +23,6 @@ import com.ecommerce.order.dto.OrderResponseDto;
 import com.ecommerce.order.dto.OrderUpdateDto;
 import com.ecommerce.order.entity.Order;
 
-
 @Component
 public class OrderMapper {
 
@@ -35,7 +34,6 @@ public class OrderMapper {
         }
 
         Order order = new Order();
-
         order.setUserId(requestDto.getUserId());
         order.setSellerId(requestDto.getSellerId());
         order.setCustomerName(requestDto.getCustomerName());
@@ -47,11 +45,9 @@ public class OrderMapper {
 
             order.setPaymentMethod(requestDto.getPaymentMethod());
         }
-
         order.setPaymentStatus(PaymentStatus.PENDING);
         order.setOrderStatus(OrderStatus.PENDING);
         order.setTransactionId(UUID.randomUUID().toString());
-
         return order;
     }
 
@@ -63,7 +59,6 @@ public class OrderMapper {
         }
 
         OrderResponseDto responseDto = new OrderResponseDto();
-
         responseDto.setOrderId(order.getOrderId());
         responseDto.setUserId(order.getUserId());
         responseDto.setSellerId(order.getSellerId());
@@ -76,11 +71,9 @@ public class OrderMapper {
 
             responseDto.setPaymentMethod(order.getPaymentMethod());
         }
-
         responseDto.setPaymentStatus(order.getPaymentStatus());
         responseDto.setOrderStatus(order.getOrderStatus());
         responseDto.setTransactionId(order.getTransactionId());
-
         return responseDto;
     }
 
@@ -92,8 +85,6 @@ public class OrderMapper {
         }
 
         Order order = new Order();
-
-        order.setOrderId(updateDto.getOrderId());
         order.setPaymentStatus(updateDto.getPaymentStatus());
         order.setOrderStatus(updateDto.getOrderStatus());
 

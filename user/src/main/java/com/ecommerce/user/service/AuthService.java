@@ -10,15 +10,13 @@
  */
 package com.ecommerce.user.service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import com.ecommerce.common.exception.AuthenticationException;
 import com.ecommerce.common.exception.ResourceNotFoundException;
@@ -30,21 +28,18 @@ import com.ecommerce.user.repository.UserRepository;
 @Service
 public class AuthService {
 
-    private final UserRepository jdbcRepository;
+    private final UserRepository repository;
     private final PasswordUtil passwordUtil;
     private final StringUtil stringUtil;
 
     public AuthService(
-
-            @Qualifier("jdbcUserRepository")
-            final UserRepository jdbcRepository,
-
+            final UserRepository repository,
             final PasswordUtil passwordUtil,
             final StringUtil stringUtil) {
 
-        this.jdbcRepository = Objects.requireNonNull(
-                jdbcRepository,
-                "JDBC repository cannot be null.");
+        this.repository = Objects.requireNonNull(
+                repository,
+                "UserRepository cannot be null.");
 
         this.passwordUtil = Objects.requireNonNull(
                 passwordUtil,
@@ -62,33 +57,30 @@ public class AuthService {
                 user,
                 "User cannot be null.");
 
+        // Clean user input
         user.setName(
                 stringUtil.clean(user.getName()));
 
         user.setEmail(
                 stringUtil.cleanEmail(user.getEmail()));
 
-        User existingUser =
-                jdbcRepository.findByEmail(
-                        user.getEmail());
-
-        if (existingUser != null) {
-
+        // Check duplicate email
+        if (repository.existsByEmail(user.getEmail())) {
             throw new AuthenticationException(
                     "Email already exists.");
         }
 
+        // Encrypt password before saving
         user.setPassword(
-                passwordUtil.encrypt(
-                        user.getPassword()));
+                passwordUtil.encrypt(user.getPassword()));
 
-        user.setCreatedAt(
-                LocalDateTime.now());
+        /*
+         * createdAt and updatedAt are handled by
+         * @CreationTimestamp and @UpdateTimestamp
+         * in User entity.
+         */
 
-        user.setUpdatedAt(
-                LocalDateTime.now());
-
-        return jdbcRepository.save(user);
+        return repository.save(user);
     }
 
     // Authenticates the user
@@ -98,103 +90,92 @@ public class AuthService {
                 user,
                 "User cannot be null.");
 
-        String email =
-                stringUtil.cleanEmail(
-                        user.getEmail());
+        final String email =
+                stringUtil.cleanEmail(user.getEmail());
 
-        User existingUser =
-                jdbcRepository.findByEmail(email);
+        final User existingUser =
+                repository.findByEmail(email);
 
         if (existingUser == null) {
-
             throw new AuthenticationException(
                     "User not found.");
         }
 
-        boolean isPasswordValid =
+        final boolean isPasswordValid =
                 passwordUtil.matches(
                         user.getPassword(),
                         existingUser.getPassword());
 
         if (!isPasswordValid) {
-
             throw new AuthenticationException(
                     "Invalid password.");
         }
 
-        existingUser.setLastLoginAt(
-                LocalDateTime.now());
-
-        existingUser.setUpdatedAt(
-                LocalDateTime.now());
-
-        jdbcRepository.update(existingUser);
-
         return existingUser;
     }
 
-    // Retrieves a user using an email address
+    // Retrieves a user using email
     @Cacheable(
             value = "users",
-            key = "#email")
+            key = "'email:' + #email")
     public User getUserByEmail(final String email) {
 
-        String cleanEmail = stringUtil.cleanEmail(email);
+        final String cleanEmail =
+                stringUtil.cleanEmail(email);
 
-        return jdbcRepository.findByEmail(cleanEmail);
+        return repository.findByEmail(cleanEmail);
     }
+
     // Retrieves all users
     public Collection<User> findAll() {
 
-        return jdbcRepository.findAll();
+        return repository.findAll();
     }
 
+    // Retrieves user by id
     @Cacheable(
             value = "users",
-            key = "#userId")
-    public User findById(
-            final Integer userId) {
+            key = "'id:' + #userId")
+    public User findById(final Integer userId) {
 
         Objects.requireNonNull(
                 userId,
                 "User ID cannot be null.");
 
-        return jdbcRepository.findById(userId);
+        return repository.findById(userId);
     }
 
     // Updates user information
     @CachePut(
             value = "users",
-            key = "#user.id")
+            key = "'id:' + #user.id")
     public boolean update(final User user) {
 
-        Objects.requireNonNull(user, "User cannot be null.");
+        Objects.requireNonNull(
+                user,
+                "User cannot be null.");
 
-        user.setUpdatedAt(LocalDateTime.now());
-
-        return jdbcRepository.update(user);
+        return repository.update(user);
     }
 
     // Deletes a user
     @CacheEvict(
             value = "users",
-            key = "#userId")
-    public boolean delete(
-            final Integer userId) {
+            key = "'id:' + #userId")
+    public boolean delete(final Integer userId) {
 
         Objects.requireNonNull(
                 userId,
                 "User ID cannot be null.");
 
-        User user =
-                jdbcRepository.findById(userId);
+        final User user =
+                repository.findById(userId);
 
         if (user == null) {
-
             throw new ResourceNotFoundException(
                     "User not found.");
         }
 
-        return jdbcRepository.delete(userId);
+        return repository.delete(userId);
     }
 }

@@ -1,23 +1,20 @@
 /*
  * SubCategory.java
  *
- * Version 1.1
+ * Version 1.2
  *
  * July 31, 2026
  *
  * Copyright (c) 2026.
  * All Rights Reserved.
  */
-
 package com.ecommerce.subcategory.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
 import com.ecommerce.category.entity.Category;
 import com.ecommerce.common.validation.CreateGroup;
 import com.ecommerce.common.validation.UpdateGroup;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,8 +24,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -37,7 +32,7 @@ import jakarta.validation.constraints.Size;
 
 // Represents a product subcategory
 @Entity
-@Table(name = "subcategory")
+@Table(name = "sub_category")
 public class SubCategory implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,9 +54,9 @@ public class SubCategory implements Serializable {
             }
     )
     @Size(
-            min = 2,
+            min = 3,
             max = 50,
-            message = "Subcategory name must contain 2 to 50 characters.",
+            message = "Subcategory name must contain 3 to 50 characters.",
             groups = {
                     CreateGroup.class,
                     UpdateGroup.class
@@ -69,7 +64,7 @@ public class SubCategory implements Serializable {
     )
     @Pattern(
             regexp = "^[A-Za-z][A-Za-z ]*$",
-            message = "Subcategory name must contain only letters.",
+            message = "Subcategory name must contain only letters and spaces.",
             groups = {
                     CreateGroup.class,
                     UpdateGroup.class
@@ -83,7 +78,7 @@ public class SubCategory implements Serializable {
     )
     private String subCategoryName;
 
-    @Valid
+    // Parent category of this subcategory
     @NotNull(
             message = "Category cannot be null.",
             groups = {
@@ -91,7 +86,7 @@ public class SubCategory implements Serializable {
                     UpdateGroup.class
             }
     )
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "category_id",
             nullable = false
@@ -110,9 +105,11 @@ public class SubCategory implements Serializable {
     )
     private LocalDateTime updatedAt;
 
+    // Default constructor required by JPA
     public SubCategory() {
     }
 
+    // Parameterized constructor
     public SubCategory(
             final Integer subCategoryId,
             final String subCategoryName,
@@ -131,7 +128,8 @@ public class SubCategory implements Serializable {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(final Integer subCategoryId) {
+    public void setSubCategoryId(
+            final Integer subCategoryId) {
 
         this.subCategoryId = subCategoryId;
     }
@@ -140,7 +138,8 @@ public class SubCategory implements Serializable {
         return subCategoryName;
     }
 
-    public void setSubCategoryName(final String subCategoryName) {
+    public void setSubCategoryName(
+            final String subCategoryName) {
 
         this.subCategoryName = subCategoryName;
     }
@@ -149,7 +148,8 @@ public class SubCategory implements Serializable {
         return category;
     }
 
-    public void setCategory(final Category category) {
+    public void setCategory(
+            final Category category) {
 
         this.category = category;
     }
@@ -158,7 +158,8 @@ public class SubCategory implements Serializable {
         return createdAt;
     }
 
-    public void setCreatedAt(final LocalDateTime createdAt) {
+    public void setCreatedAt(
+            final LocalDateTime createdAt) {
 
         this.createdAt = createdAt;
     }
@@ -167,7 +168,8 @@ public class SubCategory implements Serializable {
         return updatedAt;
     }
 
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
+    public void setUpdatedAt(
+            final LocalDateTime updatedAt) {
 
         this.updatedAt = updatedAt;
     }
@@ -181,6 +183,10 @@ public class SubCategory implements Serializable {
                 + ", subCategoryName='"
                 + subCategoryName
                 + '\''
+                + ", categoryId="
+                + (category != null
+                ? category.getCategoryId()
+                : null)
                 + '}';
     }
 }

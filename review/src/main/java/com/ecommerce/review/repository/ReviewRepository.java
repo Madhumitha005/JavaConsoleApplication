@@ -12,7 +12,6 @@
 package com.ecommerce.review.repository;
 
 import java.util.Collection;
-
 import com.ecommerce.review.entity.Review;
 
 public interface ReviewRepository {

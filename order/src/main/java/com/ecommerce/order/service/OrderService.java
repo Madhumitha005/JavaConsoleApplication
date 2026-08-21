@@ -1,9 +1,9 @@
 /*
  * OrderService.java
  *
- * Version 1.7
+ * Version 2.0
  *
- * August 05, 2026
+ * August 21, 2026
  *
  * Copyright (c) 2026.
  * All Rights Reserved.
@@ -14,69 +14,57 @@ package com.ecommerce.order.service;
 import java.util.Collection;
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 
 import com.ecommerce.common.enums.OrderStatus;
 import com.ecommerce.common.enums.PaymentStatus;
 import com.ecommerce.order.entity.Order;
+import com.ecommerce.order.repository.OrderRepository;
 import com.ecommerce.orderitem.entity.OrderItem;
 import com.ecommerce.orderitem.repository.OrderItemRepository;
-import com.ecommerce.order.repository.OrderRepository;
 import com.ecommerce.product.entity.Product;
 import com.ecommerce.product.repository.ProductRepository;
 
-// Service class responsible for order operations
 @Service
 @Transactional
 public class OrderService {
 
-    private final OrderRepository memoryOrderRepository;
-    private final OrderRepository jdbcOrderRepository;
-    private final OrderItemRepository memoryOrderItemRepository;
-    private final OrderItemRepository jdbcOrderItemRepository;
-    private final ProductRepository memoryProductRepository;
-    private final ProductRepository jdbcProductRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ProductRepository productRepository;
 
     public OrderService(
+            final OrderRepository orderRepository,
+            final OrderItemRepository orderItemRepository,
+            final ProductRepository productRepository) {
 
-            @Qualifier("inMemoryOrderRepository")
-            final OrderRepository memoryOrderRepository,
-            @Qualifier("jdbcOrderRepository")
-            final OrderRepository jdbcOrderRepository,
-            @Qualifier("inMemoryOrderItemRepository")
-            final OrderItemRepository memoryOrderItemRepository,
-            @Qualifier("jdbcOrderItemRepository")
-            final OrderItemRepository jdbcOrderItemRepository,
-            @Qualifier("inMemoryProductRepository")
-            final ProductRepository memoryProductRepository,
-            @Qualifier("jdbcProductRepository")
-            final ProductRepository jdbcProductRepository) {
+        this.orderRepository =
+                Objects.requireNonNull(orderRepository);
 
-        this.memoryOrderRepository = Objects.requireNonNull(memoryOrderRepository);
-        this.jdbcOrderRepository = Objects.requireNonNull(jdbcOrderRepository);
-        this.memoryOrderItemRepository = Objects.requireNonNull(memoryOrderItemRepository);
-        this.jdbcOrderItemRepository = Objects.requireNonNull(jdbcOrderItemRepository);
-        this.memoryProductRepository = Objects.requireNonNull(memoryProductRepository);
-        this.jdbcProductRepository = Objects.requireNonNull(jdbcProductRepository);
+        this.orderItemRepository =
+                Objects.requireNonNull(orderItemRepository);
+
+        this.productRepository =
+                Objects.requireNonNull(productRepository);
     }
 
     // Places new order
     @Caching(evict = {
             @CacheEvict(value = "orders", allEntries = true),
-            @CacheEvict(value = "ordersByUser", key = "#order.userId"),
-            @CacheEvict(value = "ordersBySeller", key = "#order.sellerId")
+            @CacheEvict(value = "ordersByUser",
+                    key = "#order.userId"),
+            @CacheEvict(value = "ordersBySeller",
+                    key = "#order.sellerId")
     })
     public boolean placeOrder(
             final Order order,
             final Collection<OrderItem> orderItems) {
 
-        if (order == null || orderItems == null) {
-
+        if (order == null || orderItems == null || orderItems.isEmpty()) {
             return false;
         }
 
@@ -84,30 +72,23 @@ public class OrderService {
 
         for (OrderItem item : orderItems) {
 
-            Product product = jdbcProductRepository.findById(item.getProductId());
+            Product product =
+                    productRepository.findById(item.getProductId());
 
             if (product == null) {
-
-                product = memoryProductRepository.findById(item.getProductId());
-            }
-
-            if (product == null) {
-
-                return false;
-            }
-
-            Integer sellerId = product.getSeller().getId();
-
-            if (order.getSellerId() == null) {
-
-                order.setSellerId(sellerId);
-
-            } else if (!order.getSellerId().equals(sellerId)) {
-
                 return false;
             }
 
             if (product.getQuantity() < item.getQuantity()) {
+                return false;
+            }
+
+            if (order.getSellerId() == null) {
+
+                order.setSellerId(product.getSeller().getId());
+
+            } else if (!order.getSellerId()
+                    .equals(product.getSeller().getId())) {
 
                 return false;
             }
@@ -115,117 +96,185 @@ public class OrderService {
             double price = product.getPrice();
             double discount = product.getDiscount();
             double tax = product.getTax();
-            double discountAmount = price * discount / 100;
-            double afterDiscount = price - discountAmount;
-            double taxAmount = afterDiscount * tax / 100;
-            double finalPrice = afterDiscount + taxAmount;
 
-            totalAmount += finalPrice * item.getQuantity();
+            double discountAmount =
+                    price * discount / 100;
 
-            product.setQuantity(product.getQuantity() - item.getQuantity());
+            double afterDiscount =
+                    price - discountAmount;
 
-            jdbcProductRepository.update(product);
-            memoryProductRepository.update(product);
+            double taxAmount =
+                    afterDiscount * tax / 100;
+
+            double finalPrice =
+                    afterDiscount + taxAmount;
+
+            totalAmount +=
+                    finalPrice * item.getQuantity();
+
+            product.setQuantity(
+                    product.getQuantity()
+                            - item.getQuantity());
+
+            productRepository.update(product);
         }
 
         order.setTotalAmount(totalAmount);
 
         if (order.getOrderStatus() == null) {
-
             order.setOrderStatus(OrderStatus.PENDING);
         }
 
         if (order.getPaymentStatus() == null) {
-
             order.setPaymentStatus(PaymentStatus.PENDING);
         }
 
-        boolean saved = jdbcOrderRepository.save(order);
+        boolean saved =
+                orderRepository.save(order);
 
         if (!saved) {
-
             return false;
         }
-
-        memoryOrderRepository.save(order);
 
         for (OrderItem item : orderItems) {
 
             item.setOrderId(order.getOrderId());
 
-            jdbcOrderItemRepository.save(item);
-            memoryOrderItemRepository.save(item);
+            orderItemRepository.save(item);
         }
 
         return true;
     }
 
-    // Find order by id
-    @Cacheable(value = "ordersById", key = "#orderId")
-    public Order findById(final Integer orderId) {
+    // Find order by ID
+    @Cacheable(
+            value = "ordersById",
+            key = "#orderId")
+    public Order findById(
+            final Integer orderId) {
 
-        Order order = memoryOrderRepository.findById(orderId);
-
-        if (order == null) {
-
-            order = jdbcOrderRepository.findById(orderId);
+        if (orderId == null) {
+            return null;
         }
 
-        return order;
+        return orderRepository.findById(orderId);
     }
 
     // Find all orders
-    @Cacheable(value = "orders", key = "'all'")
+    @Cacheable(
+            value = "orders",
+            key = "'all'")
     public Collection<Order> findAll() {
 
-        return jdbcOrderRepository.findAll();
+        return orderRepository.findAll();
     }
 
     // Find orders by user
-    @Cacheable(value = "ordersByUser", key = "#userId")
-    public Collection<Order> findByUserId(final Integer userId) {
+    @Cacheable(
+            value = "ordersByUser",
+            key = "#userId")
+    public Collection<Order> findByUserId(
+            final Integer userId) {
 
-        Collection<Order> orders = memoryOrderRepository.findByUserId(userId);
+        return orderRepository.findByUserId(userId);
+    }
 
-        if (orders == null || orders.isEmpty()) {
+    // Find orders by seller
+    @Cacheable(
+            value = "ordersBySeller",
+            key = "#sellerId")
+    public Collection<Order> findBySellerId(
+            final Integer sellerId) {
 
-            orders = jdbcOrderRepository.findByUserId(userId);
-        }
-
-        return orders;
+        return orderRepository.findBySellerId(sellerId);
     }
 
     // Update order
     @Caching(evict = {
-            @CacheEvict(value = "orders", allEntries = true),
-            @CacheEvict(value = "ordersById", key = "#order.orderId"),
-            @CacheEvict(value = "ordersByUser", allEntries = true),
-            @CacheEvict(value = "ordersBySeller", allEntries = true)
+            @CacheEvict(
+                    value = "orders",
+                    allEntries = true),
+
+            @CacheEvict(
+                    value = "ordersById",
+                    key = "#order.orderId"),
+
+            @CacheEvict(
+                    value = "ordersByUser",
+                    allEntries = true),
+
+            @CacheEvict(
+                    value = "ordersBySeller",
+                    allEntries = true)
     })
-    public boolean update(final Order order) {
+    public boolean update(
+            final Order order) {
 
-        boolean updated = jdbcOrderRepository.update(order);
+        if (order == null ||
+                order.getOrderId() == null) {
 
-        if (updated) {
-
-            memoryOrderRepository.update(order);
+            return false;
         }
 
-        return updated;
+        /*
+         * Important:
+         * Never merge a newly-created partial Order.
+         * First load the existing entity from DB.
+         */
+        Order existingOrder =
+                orderRepository.findById(
+                        order.getOrderId());
+
+        if (existingOrder == null) {
+            return false;
+        }
+
+        if (order.getOrderStatus() != null) {
+
+            existingOrder.setOrderStatus(
+                    order.getOrderStatus());
+        }
+
+        if (order.getPaymentStatus() != null) {
+
+            existingOrder.setPaymentStatus(
+                    order.getPaymentStatus());
+        }
+
+        return orderRepository.update(
+                existingOrder);
     }
 
     // Update order status
     @Caching(evict = {
-            @CacheEvict(value = "orders", allEntries = true),
-            @CacheEvict(value = "ordersById", key = "#orderId"),
-            @CacheEvict(value = "ordersByUser", allEntries = true),
-            @CacheEvict(value = "ordersBySeller", allEntries = true)
+            @CacheEvict(
+                    value = "orders",
+                    allEntries = true),
+
+            @CacheEvict(
+                    value = "ordersById",
+                    key = "#orderId"),
+
+            @CacheEvict(
+                    value = "ordersByUser",
+                    allEntries = true),
+
+            @CacheEvict(
+                    value = "ordersBySeller",
+                    allEntries = true)
     })
     public boolean updateOrderStatus(
             final Integer orderId,
             final OrderStatus orderStatus) {
 
-        Order order = findById(orderId);
+        if (orderId == null ||
+                orderStatus == null) {
+
+            return false;
+        }
+
+        Order order =
+                orderRepository.findById(orderId);
 
         if (order == null) {
             return false;
@@ -233,40 +282,34 @@ public class OrderService {
 
         order.setOrderStatus(orderStatus);
 
-        return update(order);
+        return orderRepository.update(order);
     }
 
     // Delete order
     @Caching(evict = {
-            @CacheEvict(value = "orders", allEntries = true),
-            @CacheEvict(value = "ordersById", key = "#orderId"),
-            @CacheEvict(value = "ordersByUser", allEntries = true),
-            @CacheEvict(value = "ordersBySeller", allEntries = true)
+            @CacheEvict(
+                    value = "orders",
+                    allEntries = true),
+
+            @CacheEvict(
+                    value = "ordersById",
+                    key = "#orderId"),
+
+            @CacheEvict(
+                    value = "ordersByUser",
+                    allEntries = true),
+
+            @CacheEvict(
+                    value = "ordersBySeller",
+                    allEntries = true)
     })
-    public boolean delete(final Integer orderId) {
+    public boolean delete(
+            final Integer orderId) {
 
-        boolean deleted = jdbcOrderRepository.delete(orderId);
-
-        if (deleted) {
-
-            memoryOrderRepository.delete(orderId);
+        if (orderId == null) {
+            return false;
         }
 
-        return deleted;
-    }
-
-    @Cacheable(value = "ordersBySeller", key = "#sellerId")
-    public Collection<Order> findBySellerId(
-            final Integer sellerId) {
-
-        Collection<Order> orders =
-                memoryOrderRepository.findBySellerId(sellerId);
-
-        if (orders == null || orders.isEmpty()) {
-
-            orders = jdbcOrderRepository.findBySellerId(sellerId);
-        }
-
-        return orders;
+        return orderRepository.delete(orderId);
     }
 }

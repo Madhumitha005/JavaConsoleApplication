@@ -8,9 +8,6 @@ import jakarta.validation.constraints.NotNull;
 public class OrderUpdateDto {
 
     @NotNull
-    private Integer orderId;
-
-    @NotNull
     private OrderStatus orderStatus;
 
     @NotNull
@@ -19,21 +16,11 @@ public class OrderUpdateDto {
     public OrderUpdateDto() {
     }
 
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(final Integer orderId) {
-
-        this.orderId = orderId;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     public void setOrderStatus(final OrderStatus orderStatus) {
-
         this.orderStatus = orderStatus;
     }
 
@@ -42,7 +29,6 @@ public class OrderUpdateDto {
     }
 
     public void setPaymentStatus(final PaymentStatus paymentStatus) {
-
         this.paymentStatus = paymentStatus;
     }
 }

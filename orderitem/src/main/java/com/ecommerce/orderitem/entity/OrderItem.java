@@ -1,28 +1,31 @@
-/*
- * OrderItem.java
- *
- * Version 1.0
- *
- * August 03, 2026
- *
- * Copyright (c) 2026.
- * All Rights Reserved.
- */
 package com.ecommerce.orderitem.entity;
 
 import com.ecommerce.common.validation.CreateGroup;
 import com.ecommerce.common.validation.UpdateGroup;
-
+import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 
-public class OrderItem {
+@Entity
+@Table(name = "order_item")
+public class OrderItem implements Serializable {
 
+    private static final long serialVERSIONID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_item_id")
     @Positive(
             message = "Invalid Order Item ID.",
             groups = UpdateGroup.class
     )
     private int orderItemId;
 
+    @Column(name = "order_id", nullable = false)
     @Positive(
             message = "Invalid Order ID.",
             groups = {
@@ -32,6 +35,7 @@ public class OrderItem {
     )
     private int orderId;
 
+    @Column(name = "product_id", nullable = false)
     @Positive(
             message = "Invalid Product ID.",
             groups = {
@@ -41,6 +45,7 @@ public class OrderItem {
     )
     private int productId;
 
+    @Column(name = "quantity", nullable = false)
     @Positive(
             message = "Quantity must be greater than zero.",
             groups = {
@@ -66,48 +71,39 @@ public class OrderItem {
     }
 
     public int getOrderItemId() {
-
         return orderItemId;
     }
 
     public void setOrderItemId(final int orderItemId) {
-
         this.orderItemId = orderItemId;
     }
 
     public int getOrderId() {
-
         return orderId;
     }
 
     public void setOrderId(final int orderId) {
-
         this.orderId = orderId;
     }
 
     public int getProductId() {
-
         return productId;
     }
 
     public void setProductId(final int productId) {
-
         this.productId = productId;
     }
 
     public int getQuantity() {
-
         return quantity;
     }
 
     public void setQuantity(final int quantity) {
-
         this.quantity = quantity;
     }
 
     @Override
     public String toString() {
-
         return "OrderItem{"
                 + "orderItemId="
                 + orderItemId

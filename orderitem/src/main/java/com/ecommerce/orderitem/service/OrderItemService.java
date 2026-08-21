@@ -9,47 +9,35 @@
  */
 package com.ecommerce.orderitem.service;
 
+import java.util.Collection;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ecommerce.orderitem.entity.OrderItem;
 import com.ecommerce.orderitem.repository.OrderItemRepository;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
-
-import java.util.Collection;
-
-/**
- * Service class responsible for order item management operations.
- * Handles adding, retrieving, updating, and deleting order items.
- * This service maintains order item data consistency between
- * JDBC and in-memory repository implementations.
- */
 @Service
+@Transactional
 public class OrderItemService {
 
-    private final OrderItemRepository memoryRepository;
-    private final OrderItemRepository jdbcRepository;
+    private final OrderItemRepository orderItemRepository;
 
-    // Creates OrderItemService with required repository dependencies
     public OrderItemService(
+            final OrderItemRepository orderItemRepository) {
 
-            @Qualifier("inMemoryOrderItemRepository")
-            final OrderItemRepository memoryRepository,
-            @Qualifier("jdbcOrderItemRepository")
-            final OrderItemRepository jdbcRepository) {
-
-        this.memoryRepository = memoryRepository;
-        this.jdbcRepository = jdbcRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
-     // Adds a new order item
-     @Caching(evict = {
-             @CacheEvict(value = "orderItems", allEntries = true),
-             @CacheEvict(value = "orderItemsByOrder",
-                     key = "#orderItem.orderId")
-     })
+    // Add order item
+    @Caching(evict = {
+            @CacheEvict(value = "orderItems", allEntries = true),
+            @CacheEvict(value = "orderItemsByOrder",
+                    key = "#orderItem.orderId")
+    })
     public boolean addOrderItem(final OrderItem orderItem) {
 
         if (orderItem == null) {
@@ -68,32 +56,33 @@ public class OrderItemService {
             return false;
         }
 
-        boolean jdbcSaved = jdbcRepository.save(orderItem);
-
-        if (!jdbcSaved) {
-            return false;
-        }
-
-        return memoryRepository.save(orderItem);
+        return orderItemRepository.save(orderItem);
     }
 
-    // Adds multiple order items
+    // Add multiple order items
     @Caching(evict = {
             @CacheEvict(value = "orderItems", allEntries = true),
-            @CacheEvict(value = "orderItemsByOrder", allEntries = true)
+            @CacheEvict(value = "orderItemsByOrder", allEntries = true),
+            @CacheEvict(value = "orderItemsById", allEntries = true)
     })
-    public boolean addOrderItems(final Collection<OrderItem> orderItems) {
+    public boolean addOrderItems(
+            final Collection<OrderItem> orderItems) {
 
         if (orderItems == null || orderItems.isEmpty()) {
-
             return false;
         }
 
         for (final OrderItem orderItem : orderItems) {
 
-            boolean saved = addOrderItem(orderItem);
+            if (orderItem == null
+                    || orderItem.getOrderId() <= 0
+                    || orderItem.getProductId() <= 0
+                    || orderItem.getQuantity() <= 0) {
 
-            if (!saved) {
+                return false;
+            }
+
+            if (!orderItemRepository.save(orderItem)) {
                 return false;
             }
         }
@@ -101,71 +90,58 @@ public class OrderItemService {
         return true;
     }
 
-    // Retrieves an order item using order item id
+    // Find order item by ID
     @Cacheable(value = "orderItemsById", key = "#orderItemId")
-    public OrderItem getOrderItemById(final int orderItemId) {
+    public OrderItem getOrderItemById(
+            final int orderItemId) {
 
         if (orderItemId <= 0) {
             return null;
         }
 
-        OrderItem orderItem = jdbcRepository.findById(orderItemId);
-
-        if (orderItem == null) {
-
-            orderItem = memoryRepository.findById(orderItemId);
-        }
-        return orderItem;
+        return orderItemRepository.findById(orderItemId);
     }
 
-    // Retrieves all order items belonging to an order
+    // Find order items by order ID
     @Cacheable(value = "orderItemsByOrder", key = "#orderId")
-    public Collection<OrderItem> getOrderItemsByOrderId(final int orderId) {
+    public Collection<OrderItem> getOrderItemsByOrderId(
+            final int orderId) {
 
         if (orderId <= 0) {
-
             return java.util.Collections.emptyList();
         }
 
-        return jdbcRepository.findByOrderId(orderId);
+        return orderItemRepository.findByOrderId(orderId);
     }
 
+    // Find all order items
     @Cacheable(value = "orderItems", key = "'all'")
     public Collection<OrderItem> getAllOrderItems() {
 
-        return jdbcRepository.findAll();
+        return orderItemRepository.findAll();
     }
 
-    // Updates an existing order item
+    // Update order item
     @Caching(evict = {
             @CacheEvict(value = "orderItems", allEntries = true),
             @CacheEvict(value = "orderItemsById",
                     key = "#orderItem.orderItemId"),
             @CacheEvict(value = "orderItemsByOrder",
-                    key = "#orderItem.orderId")
+                    allEntries = true)
     })
-    public boolean updateOrderItem(final OrderItem orderItem) {
+    public boolean updateOrderItem(
+            final OrderItem orderItem) {
 
-        if (orderItem == null) {
+        if (orderItem == null
+                || orderItem.getOrderItemId() <= 0) {
+
             return false;
         }
 
-        if (orderItem.getOrderItemId() <= 0) {
-            return false;
-        }
-
-        boolean jdbcUpdated = jdbcRepository.update(orderItem);
-
-        if (!jdbcUpdated) {
-            return false;
-        }
-
-        memoryRepository.update(orderItem);
-
-        return true;
+        return orderItemRepository.update(orderItem);
     }
 
-    // Retrieves all order items
+    // Delete order item
     @Caching(evict = {
             @CacheEvict(value = "orderItems", allEntries = true),
             @CacheEvict(value = "orderItemsById",
@@ -173,24 +149,17 @@ public class OrderItemService {
             @CacheEvict(value = "orderItemsByOrder",
                     allEntries = true)
     })
-    public boolean deleteOrderItem(final int orderItemId) {
+    public boolean deleteOrderItem(
+            final int orderItemId) {
 
         if (orderItemId <= 0) {
             return false;
         }
 
-        boolean jdbcDeleted = jdbcRepository.delete(orderItemId);
-
-        if (!jdbcDeleted) {
-            return false;
-        }
-
-        memoryRepository.delete(orderItemId);
-
-        return true;
+        return orderItemRepository.delete(orderItemId);
     }
 
-    // Deletes an order item using order item id
+    // Delete all items belonging to an order
     @Caching(evict = {
             @CacheEvict(value = "orderItems", allEntries = true),
             @CacheEvict(value = "orderItemsByOrder",
@@ -198,15 +167,13 @@ public class OrderItemService {
             @CacheEvict(value = "orderItemsById",
                     allEntries = true)
     })
-    public boolean deleteOrderItemsByOrderId(final int orderId) {
+    public boolean deleteOrderItemsByOrderId(
+            final int orderId) {
 
         if (orderId <= 0) {
             return false;
         }
 
-        boolean jdbcDeleted = jdbcRepository.deleteByOrderId(orderId);
-        memoryRepository.deleteByOrderId(orderId);
-
-        return jdbcDeleted ;
+        return orderItemRepository.deleteByOrderId(orderId);
     }
 }

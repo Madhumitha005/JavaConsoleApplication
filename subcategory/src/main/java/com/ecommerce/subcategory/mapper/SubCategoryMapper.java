@@ -1,13 +1,13 @@
 /*
- * SubCategoryMapper.java
- *
- * Version 1.0
- *
- * July 30, 2026
- *
- * Copyright (c) 2026.
- * All Rights Reserved.
- */
+         * SubCategoryMapper.java
+         *
+         * Version 1.1
+         *
+         * July 30, 2026
+         *
+         * Copyright (c) 2026.
+         * All Rights Reserved.
+         */
 package com.ecommerce.subcategory.mapper;
 
 import org.springframework.stereotype.Component;
@@ -18,64 +18,90 @@ import com.ecommerce.subcategory.dto.SubCategoryResponseDto;
 import com.ecommerce.subcategory.dto.SubCategoryUpdateDto;
 import com.ecommerce.subcategory.entity.SubCategory;
 
+// Converts between SubCategory DTOs and entities
 @Component
 public class SubCategoryMapper {
 
-    // Converts request DTO to entity
-    public SubCategory toEntity(final SubCategoryRequestDto requestDto) {
+    //Converts a create request DTO into a SubCategory entity
+    public SubCategory toEntity(
+            final SubCategoryRequestDto requestDto) {
 
         if (requestDto == null) {
-
             return null;
         }
 
         Category category = new Category();
-        category.setCategoryId(requestDto.getCategoryId());
+        category.setCategoryId(
+                requestDto.getCategoryId()
+        );
 
         SubCategory subCategory = new SubCategory();
-        subCategory.setSubCategoryName(requestDto.getSubCategoryName());
+
+        subCategory.setSubCategoryName(
+                requestDto.getSubCategoryName()
+        );
+
         subCategory.setCategory(category);
 
         return subCategory;
     }
 
-    // Converts update DTO to entity
-    public SubCategory toEntity(final SubCategoryUpdateDto updateDto) {
+    /**
+     * Converts an update request DTO into a SubCategory entity.
+     *
+     * The subcategory ID is intentionally not mapped here because
+     * the ID comes from the PUT path variable.
+     *
+     * @param updateDto update request DTO
+     * @return mapped SubCategory entity
+     */
+    public SubCategory toEntity(
+            final SubCategoryUpdateDto updateDto) {
 
         if (updateDto == null) {
-
             return null;
         }
 
         Category category = new Category();
-        category.setCategoryId(updateDto.getCategoryId());
+        category.setCategoryId(
+                updateDto.getCategoryId()
+        );
 
         SubCategory subCategory = new SubCategory();
-        subCategory.setSubCategoryId(updateDto.getSubCategoryId());
-        subCategory.setSubCategoryName(updateDto.getSubCategoryName());
+
+        subCategory.setSubCategoryName(
+                updateDto.getSubCategoryName()
+        );
+
         subCategory.setCategory(category);
 
         return subCategory;
     }
 
-    // Converts entity to response DTO
-    public SubCategoryResponseDto toResponseDto(final SubCategory subCategory) {
+    /**
+     * Converts a SubCategory entity into a response DTO.
+     *
+     * @param subCategory SubCategory entity
+     * @return response DTO
+     */
+    public SubCategoryResponseDto toResponseDto(
+            final SubCategory subCategory) {
 
         if (subCategory == null) {
-
             return null;
         }
 
-        SubCategoryResponseDto responseDto = new SubCategoryResponseDto();
-
-        responseDto.setSubCategoryId(subCategory.getSubCategoryId());
-        responseDto.setSubCategoryName(subCategory.getSubCategoryName());
+        Integer categoryId = null;
 
         if (subCategory.getCategory() != null) {
-
-            responseDto.setCategoryId(subCategory.getCategory().getCategoryId());
+            categoryId =
+                    subCategory.getCategory().getCategoryId();
         }
 
-        return responseDto;
+        return new SubCategoryResponseDto(
+                subCategory.getSubCategoryId(),
+                subCategory.getSubCategoryName(),
+                categoryId
+        );
     }
 }

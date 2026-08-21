@@ -20,7 +20,12 @@ import com.ecommerce.orderitem.entity.OrderItem;
 @Component
 public class OrderItemMapper {
 
-    public OrderItem toEntity(final OrderItemRequestDto dto) {
+    public OrderItem toEntity(
+            final OrderItemRequestDto dto) {
+
+        if (dto == null) {
+            return null;
+        }
 
         OrderItem orderItem = new OrderItem();
 
@@ -31,7 +36,12 @@ public class OrderItemMapper {
         return orderItem;
     }
 
-    public OrderItem toEntity(final OrderItemUpdateDto dto) {
+    public OrderItem toEntity(
+            final OrderItemUpdateDto dto) {
+
+        if (dto == null) {
+            return null;
+        }
 
         OrderItem orderItem = new OrderItem();
 
@@ -41,9 +51,15 @@ public class OrderItemMapper {
         return orderItem;
     }
 
-    public OrderItemResponseDto toResponseDto(final OrderItem orderItem) {
+    public OrderItemResponseDto toResponseDto(
+            final OrderItem orderItem) {
 
-        OrderItemResponseDto dto = new OrderItemResponseDto();
+        if (orderItem == null) {
+            return null;
+        }
+
+        OrderItemResponseDto dto =
+                new OrderItemResponseDto();
 
         dto.setOrderItemId(orderItem.getOrderItemId());
         dto.setOrderId(orderItem.getOrderId());

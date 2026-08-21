@@ -3,18 +3,21 @@
  *
  * Version 1.0
  *
- * July 30, 2026
+ * August 21, 2026
  *
  * Copyright (c) 2026.
  * All Rights Reserved.
  */
+
 package com.ecommerce.subcategory.repository;
 
 import java.util.Collection;
 
 import com.ecommerce.subcategory.entity.SubCategory;
 
-// Repository interface for subcategory operations.
+/**
+ * Repository interface for subcategory operations.
+ */
 public interface SubCategoryRepository {
 
     // Saves a subcategory
@@ -33,7 +36,8 @@ public interface SubCategoryRepository {
     SubCategory findByName(final String subCategoryName);
 
     // Returns subcategories belonging to a category
-    Collection<SubCategory> findByCategoryId(final Integer categoryId);
+    Collection<SubCategory> findByCategoryId(
+            final Integer categoryId);
 
     // Returns all subcategories
     Collection<SubCategory> findAll();
