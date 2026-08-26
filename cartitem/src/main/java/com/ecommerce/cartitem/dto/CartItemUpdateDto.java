@@ -7,6 +7,9 @@ public class CartItemUpdateDto {
     @Positive(message = "Invalid Cart Item Id")
     private int cartItemId;
 
+    @Positive(message = "Invalid User Id")
+    private int userId;
+
     @Positive(message = "Invalid Product Id")
     private int productId;
 
@@ -19,6 +22,14 @@ public class CartItemUpdateDto {
 
     public void setCartItemId(final int cartItemId) {
         this.cartItemId = cartItemId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(final int userId) {
+        this.userId = userId;
     }
 
     public int getProductId() {

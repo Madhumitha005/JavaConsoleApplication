@@ -13,7 +13,7 @@
         <groupId>com.ecommerce</groupId>
         <artifactId>ecommerce-parent</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../../../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
 
     </parent>
 
@@ -21,36 +21,29 @@
 
     <dependencies>
 
-        <!--
-        Used by:
-        CorsConfig.java
-        PasswordEncoderConfig.java
-        -->
-
+        <!-- Common Module -->
         <dependency>
             <groupId>com.ecommerce</groupId>
             <artifactId>common</artifactId>
             <version>1.0.0</version>
         </dependency>
 
-        <!--
-        Used by:
-        PasswordEncoderConfig.java
-        -->
-
+        <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!--
-        Used by:
-        CorsConfig.java
-        -->
-
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
     </dependencies>

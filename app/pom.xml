@@ -13,7 +13,7 @@
         <groupId>com.ecommerce</groupId>
         <artifactId>ecommerce-parent</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../../../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
 
     </parent>
 
@@ -95,17 +95,31 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
-
         <plugins>
-
             <plugin>
-
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
 
+                <configuration>
+                    <mainClass>com.ecommerce.app.Main</mainClass>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

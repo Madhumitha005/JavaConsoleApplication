@@ -1,45 +1,27 @@
-/*
- * ProductRepository.java
- *
- * Version 1.0
- *
- * August 03, 2026
- *
- * Copyright (c) 2026.
- * All Rights Reserved.
- */
 package com.ecommerce.product.repository;
 
 import java.util.Collection;
 
 import com.ecommerce.product.entity.Product;
 
-/**
- * Repository interface used for
- * product management operations.
- */
 public interface ProductRepository {
 
-    // Saves a product
-    boolean save(Product product);
+    boolean save(final Product product);
 
-    // Updates a product
-    boolean update(Product product);
+    boolean update(final Product product);
 
-    // Deletes a product
-    boolean delete(Integer productId);
+    boolean delete(final Integer productId);
 
-    // Finds a product by id
-    Product findById(Integer productId);
+    Product findById(final Integer productId);
 
-    // Finds a product by name
-    Product findByName(String Name);
+    Product findByName(final String productName);
 
-    // Returns all products
     Collection<Product> findAll();
 
-    // Checks whether a product exists
-    boolean existsByName(String ProductName,Integer sellerID);
+    boolean existsByName(
+            final String productName,
+            final Integer sellerId);
 
-    // Find related Product for seller
-    Collection<Product> findBySellerId(Integer sellerId);}
+    Collection<Product> findBySellerId(
+            final Integer sellerId);
+}

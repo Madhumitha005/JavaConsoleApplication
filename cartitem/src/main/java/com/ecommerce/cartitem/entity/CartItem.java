@@ -1,27 +1,37 @@
 /*
  * CartItem.java
  *
- * Version 2.0
+ * Version 3.0
  *
- * August 03, 2026
- *
- * Copyright (c) 2026.
- * All Rights Reserved.
+ * August 21, 2026
  */
 package com.ecommerce.cartitem.entity;
 
+import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Positive;
 import com.ecommerce.common.validation.CreateGroup;
 import com.ecommerce.common.validation.UpdateGroup;
 
-import jakarta.validation.constraints.Positive;
+@Entity
+@Table(name = "cart_item")
+public class CartItem implements Serializable {
 
-public class CartItem {
+    private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Positive(
             message = "Invalid Cart Item ID.",
             groups = UpdateGroup.class
     )
-    private int cartItemId;
+    @Column(name = "id")
+    private Integer cartItemId;
 
     @Positive(
             message = "Invalid User ID.",
@@ -30,7 +40,8 @@ public class CartItem {
                     UpdateGroup.class
             }
     )
-    private int userId;
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     @Positive(
             message = "Invalid Product ID.",
@@ -39,7 +50,8 @@ public class CartItem {
                     UpdateGroup.class
             }
     )
-    private int productId;
+    @Column(name = "product_id", nullable = false)
+    private Integer productId;
 
     @Positive(
             message = "Quantity must be greater than zero.",
@@ -48,16 +60,17 @@ public class CartItem {
                     UpdateGroup.class
             }
     )
-    private int quantity;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
     public CartItem() {
     }
 
     public CartItem(
-            final int cartItemId,
-            final int userId,
-            final int productId,
-            final int quantity) {
+            final Integer cartItemId,
+            final Integer userId,
+            final Integer productId,
+            final Integer quantity) {
 
         this.cartItemId = cartItemId;
         this.userId = userId;
@@ -65,39 +78,35 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public int getCartItemId() {
+    public Integer getCartItemId() {
         return cartItemId;
     }
 
-    public void setCartItemId(final int cartItemId) {
-
+    public void setCartItemId(final Integer cartItemId) {
         this.cartItemId = cartItemId;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(final int userId) {
-
+    public void setUserId(final Integer userId) {
         this.userId = userId;
     }
 
-    public int getProductId() {
+    public Integer getProductId() {
         return productId;
     }
 
-    public void setProductId(final int productId) {
-
+    public void setProductId(final Integer productId) {
         this.productId = productId;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final int quantity) {
-
+    public void setQuantity(final Integer quantity) {
         this.quantity = quantity;
     }
 

@@ -16,7 +16,7 @@ import jakarta.validation.constraints.Size;
 
 /**
  * Data transfer object used for
- * category creation and update requests.
+ * category creation and update requests
  */
 public class CategoryRequestDto {
 

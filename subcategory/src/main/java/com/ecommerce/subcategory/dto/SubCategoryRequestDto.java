@@ -1,18 +1,20 @@
-/*
- * SubCategoryRequestDto.java
- *
- * Version 1.0
- *
- * July 31, 2026
- *
- * Copyright (c) 2026.
- * All Rights Reserved.
- */
-package com.ecommerce.subcategory.dto;
+
+        /*
+         * SubCategoryRequestDto.java
+         *
+         * Version 1.1
+         *
+         * July 31, 2026
+         *
+         * Copyright (c) 2026.
+         * All Rights Reserved.
+         */
+        package com.ecommerce.subcategory.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -21,36 +23,31 @@ import jakarta.validation.constraints.Size;
  */
 public class SubCategoryRequestDto {
 
-    // Subcategory name
     @NotBlank(
             message = "Subcategory name is required."
     )
     @Size(
             min = 3,
             max = 50,
-            message =
-                    "Subcategory name must contain "
-                            + "3 to 50 characters."
+            message = "Subcategory name must contain 3 to 50 characters."
     )
     @Pattern(
             regexp = "^[A-Za-z][A-Za-z ]*$",
-            message =
-                    "Subcategory name must contain "
-                            + "only letters."
+            message = "Subcategory name must contain only letters and spaces."
     )
     private String subCategoryName;
 
-    // Category id
     @NotNull(
             message = "Category ID is required."
     )
+    @Positive(
+            message = "Category ID must be positive."
+    )
     private Integer categoryId;
 
-    // Default constructor
     public SubCategoryRequestDto() {
     }
 
-    // Parameterized constructor
     public SubCategoryRequestDto(
             final String subCategoryName,
             final Integer categoryId) {
@@ -59,27 +56,19 @@ public class SubCategoryRequestDto {
         this.categoryId = categoryId;
     }
 
-    // Returns subcategory name
     public String getSubCategoryName() {
-
         return subCategoryName;
     }
 
-    // Sets subcategory name
     public void setSubCategoryName(final String subCategoryName) {
-
         this.subCategoryName = subCategoryName;
     }
 
-    // Returns category id
     public Integer getCategoryId() {
-
         return categoryId;
     }
 
-    // Sets category id
     public void setCategoryId(final Integer categoryId) {
-
         this.categoryId = categoryId;
     }
 

@@ -3,7 +3,7 @@
  *
  * Version 1.1
  *
- * July 31, 2026
+ * August 21, 2026
  *
  * Copyright (c) 2026.
  * All Rights Reserved.
@@ -13,126 +13,176 @@ package com.ecommerce.subcategory.service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.subcategory.entity.SubCategory;
 import com.ecommerce.subcategory.repository.SubCategoryRepository;
 
-// Provides services related to subcategory management
+// Provides business operations for subcategories
 @Service
 public class SubCategoryService {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(SubCategoryService.class);
 
-    private final SubCategoryRepository memoryRepository;
-    private final SubCategoryRepository jdbcRepository;
+    private final SubCategoryRepository repository;
 
-    // Creates a SubCategoryService object
+    // Creates a SubCategoryService
     public SubCategoryService(
+            final SubCategoryRepository repository) {
 
-            @Qualifier("inMemorySubCategoryRepository")
-            final SubCategoryRepository memoryRepository,
-            @Qualifier("jdbcSubCategoryRepository")
-            final SubCategoryRepository jdbcRepository) {
-
-        this.memoryRepository = Objects.requireNonNull(memoryRepository, "Memory repository cannot be null.");
-        this.jdbcRepository = Objects.requireNonNull(jdbcRepository, "JDBC repository cannot be null.");
+        this.repository = Objects.requireNonNull(
+                repository,
+                "SubCategoryRepository cannot be null.");
     }
 
-    // Adds a subcategory
-    public boolean addSubCategory(final SubCategory subCategory) {
+    // Adds a new subcategory
+    @Transactional
+    @CacheEvict(
+            cacheNames = {
+                    "subCategories",
+                    "subCategoriesByCategory",
+                    "allSubCategories"
+            },
+            allEntries = true
+    )
+    public boolean addSubCategory(
+            final SubCategory subCategory) {
 
-        Objects.requireNonNull(subCategory, "SubCategory cannot be null.");
+        Objects.requireNonNull(
+                subCategory,
+                "SubCategory cannot be null.");
 
-        subCategory.setCreatedAt(LocalDateTime.now());
-        subCategory.setUpdatedAt(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
 
-        boolean memorySaved = memoryRepository.save(subCategory);
-        boolean jdbcSaved = jdbcRepository.save(subCategory);
+        subCategory.setCreatedAt(now);
+        subCategory.setUpdatedAt(now);
 
-        LOGGER.info("Subcategory added successfully.");
+        boolean saved = repository.save(subCategory);
 
-        return memorySaved && jdbcSaved;
-    }
+        if (saved) {
 
-    // Returns a subcategory using its id
-    public SubCategory getSubCategoryById(final Integer subCategoryId) {
-
-        Objects.requireNonNull(subCategoryId, "Subcategory ID cannot be null.");
-
-        SubCategory subCategory = memoryRepository.findById(subCategoryId);
-
-        if (subCategory == null) {
-
-            subCategory = jdbcRepository.findById(subCategoryId);
+            LOGGER.info(
+                    "Subcategory added successfully: {}",
+                    subCategory.getSubCategoryName());
         }
 
-        return subCategory;
+        return saved;
+    }
+
+    // Returns a subcategory by ID
+    @Transactional(readOnly = true)
+    @Cacheable(
+            value = "subCategories",
+            key = "#subCategoryId"
+    )
+    public SubCategory getSubCategoryById(
+            final Integer subCategoryId) {
+
+        Objects.requireNonNull(
+                subCategoryId,
+                "Subcategory ID cannot be null.");
+
+        return repository.findById(subCategoryId);
     }
 
     // Returns all subcategories
+    @Transactional(readOnly = true)
+    @Cacheable("allSubCategories")
     public Collection<SubCategory> getAllSubCategories() {
 
-        Map<Integer, SubCategory> subCategories = new LinkedHashMap<>();
-
-        memoryRepository.findAll()
-                .forEach(subCategory -> subCategories
-                        .put(subCategory.getSubCategoryId(), subCategory));
-        jdbcRepository.findAll()
-                .forEach(subCategory -> subCategories
-                        .put(subCategory.getSubCategoryId(), subCategory));
-
-        return subCategories.values();
+        return repository.findAll();
     }
 
-    // Returns subcategories by category id
-    public Collection<SubCategory> getSubCategoriesByCategoryId(final Integer categoryId) {
+    /**
+     * Returns all subcategories belonging
+     * to a particular category.
+     */
+    @Transactional(readOnly = true)
+    @Cacheable(
+            value = "subCategoriesByCategory",
+            key = "#categoryId"
+    )
+    public Collection<SubCategory> getSubCategoriesByCategoryId(
+            final Integer categoryId) {
 
-        Objects.requireNonNull(categoryId, "Category ID cannot be null.");
+        Objects.requireNonNull(
+                categoryId,
+                "Category ID cannot be null.");
 
-        Map<Integer, SubCategory> subCategories = new LinkedHashMap<>();
-
-        memoryRepository.findByCategoryId(categoryId).forEach(
-                subCategory -> subCategories.put(subCategory.getSubCategoryId(), subCategory));
-        jdbcRepository.findByCategoryId(categoryId).forEach(
-                subCategory -> subCategories.put(subCategory.getSubCategoryId(), subCategory));
-
-        return subCategories.values();
+        return repository.findByCategoryId(categoryId);
     }
 
-    // Updates a subcategory
-    public boolean updateSubCategory(final SubCategory subCategory) {
+    // Updates an existing subcategory
+    @Transactional
+    @CacheEvict(
+            cacheNames = {
+                    "subCategories",
+                    "subCategoriesByCategory",
+                    "allSubCategories"
+            },
+            allEntries = true
+    )
+    public boolean updateSubCategory(
+            final SubCategory subCategory) {
 
-        Objects.requireNonNull(subCategory, "SubCategory cannot be null.");
+        Objects.requireNonNull(
+                subCategory,
+                "SubCategory cannot be null.");
+
+        Objects.requireNonNull(
+                subCategory.getSubCategoryId(),
+                "Subcategory ID cannot be null.");
 
         subCategory.setUpdatedAt(LocalDateTime.now());
 
-        boolean memoryUpdated = memoryRepository.update(subCategory);
-        boolean jdbcUpdated = jdbcRepository.update(subCategory);
+        boolean updated = repository.update(subCategory);
 
-        LOGGER.info("Subcategory updated successfully.");
+        if (updated) {
 
-        return memoryUpdated || jdbcUpdated;
+            LOGGER.info(
+                    "Subcategory updated successfully: {}",
+                    subCategory.getSubCategoryId());
+        }
+
+        return updated;
     }
 
     // Deletes a subcategory
-    public boolean deleteSubCategory(final Integer subCategoryId) {
+    @Transactional
+    @CacheEvict(
+            cacheNames = {
+                    "subCategories",
+                    "subCategoriesByCategory",
+                    "allSubCategories"
+            },
+            allEntries = true
+    )
+    public boolean deleteSubCategory(
+            final Integer subCategoryId) {
 
-        Objects.requireNonNull(subCategoryId, "Subcategory ID cannot be null.");
+        Objects.requireNonNull(
+                subCategoryId,
+                "Subcategory ID cannot be null.");
 
-        boolean memoryDeleted = memoryRepository.delete(subCategoryId);
-        boolean jdbcDeleted = jdbcRepository.delete(subCategoryId);
+        boolean deleted =
+                repository.delete(subCategoryId);
 
-        LOGGER.info("Subcategory deleted successfully.");
+        if (deleted) {
 
-        return memoryDeleted || jdbcDeleted;
+            LOGGER.info(
+                    "Subcategory deleted successfully: {}",
+                    subCategoryId);
+        }
+
+        return deleted;
     }
 }

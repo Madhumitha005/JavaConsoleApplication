@@ -1,19 +1,21 @@
 /*
  * AuthService.java
  *
- * Version 1.1
+ * Version 2.0
  *
- * July 30, 2026
+ * August 14, 2026
  *
  * Copyright (c) 2026.
  * All Rights Reserved.
  */
 package com.ecommerce.user.service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.common.exception.AuthenticationException;
@@ -23,136 +25,157 @@ import com.ecommerce.common.util.StringUtil;
 import com.ecommerce.user.entity.User;
 import com.ecommerce.user.repository.UserRepository;
 
-/**
- * Provides authentication services for
- * signup and login operations.
- */
 @Service
 public class AuthService {
 
-    private final UserRepository memoryRepository;
-    private final UserRepository jdbcRepository;
+    private final UserRepository repository;
     private final PasswordUtil passwordUtil;
     private final StringUtil stringUtil;
 
-    // Creates an AuthService object
     public AuthService(
-            @Qualifier("inMemoryUserRepository")
-            final UserRepository memoryRepository,
-            @Qualifier("jdbcUserRepository")
-            final UserRepository jdbcRepository,
+            final UserRepository repository,
             final PasswordUtil passwordUtil,
             final StringUtil stringUtil) {
 
-        this.memoryRepository = memoryRepository;
-        this.jdbcRepository = jdbcRepository;
-        this.passwordUtil = passwordUtil;
-        this.stringUtil = stringUtil;
+        this.repository = Objects.requireNonNull(
+                repository,
+                "UserRepository cannot be null.");
+
+        this.passwordUtil = Objects.requireNonNull(
+                passwordUtil,
+                "PasswordUtil cannot be null.");
+
+        this.stringUtil = Objects.requireNonNull(
+                stringUtil,
+                "StringUtil cannot be null.");
     }
 
     // Registers a new user
     public boolean signup(final User user) {
 
-        if (user == null) {
+        Objects.requireNonNull(
+                user,
+                "User cannot be null.");
 
-            throw new NullPointerException("User cannot be null.");
+        // Clean user input
+        user.setName(
+                stringUtil.clean(user.getName()));
+
+        user.setEmail(
+                stringUtil.cleanEmail(user.getEmail()));
+
+        // Check duplicate email
+        if (repository.existsByEmail(user.getEmail())) {
+            throw new AuthenticationException(
+                    "Email already exists.");
         }
 
-        user.setName(stringUtil.clean(user.getName()));
-        user.setEmail(stringUtil.cleanEmail(user.getEmail()));
-        user.setPassword(passwordUtil.encrypt(user.getPassword()));
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-        User existingUser = memoryRepository.findByEmail(user.getEmail());
+        // Encrypt password before saving
+        user.setPassword(
+                passwordUtil.encrypt(user.getPassword()));
 
-        if (existingUser == null) {
-            existingUser = jdbcRepository.findByEmail(user.getEmail());
-        }
+        /*
+         * createdAt and updatedAt are handled by
+         * @CreationTimestamp and @UpdateTimestamp
+         * in User entity.
+         */
 
-        if (existingUser != null) {
-            throw new AuthenticationException("Email already exists.");
-        }
-
-        boolean memorySaved = memoryRepository.save(user);
-        boolean jdbcSaved = jdbcRepository.save(user);
-
-        return memorySaved && jdbcSaved;
+        return repository.save(user);
     }
 
     // Authenticates the user
     public User login(final User user) {
 
-        if (user == null) {
+        Objects.requireNonNull(
+                user,
+                "User cannot be null.");
 
-            throw new NullPointerException("User cannot be null.");
-        }
+        final String email =
+                stringUtil.cleanEmail(user.getEmail());
 
-        String email = stringUtil.cleanEmail(user.getEmail());
-        User existingUser = memoryRepository.findByEmail(email);
-
-        if (existingUser == null) {
-            existingUser = jdbcRepository.findByEmail(email);
-        }
+        final User existingUser =
+                repository.findByEmail(email);
 
         if (existingUser == null) {
-            throw new AuthenticationException("User not found.");
+            throw new AuthenticationException(
+                    "User not found.");
         }
 
-        boolean isPasswordValid = passwordUtil.matches(
+        final boolean isPasswordValid =
+                passwordUtil.matches(
                         user.getPassword(),
                         existingUser.getPassword());
 
         if (!isPasswordValid) {
-            throw new AuthenticationException("Invalid password.");
+            throw new AuthenticationException(
+                    "Invalid password.");
         }
-
-        existingUser.setLastLoginAt(LocalDateTime.now());
-        existingUser.setUpdatedAt(LocalDateTime.now());
-
-        memoryRepository.update(existingUser);
-        jdbcRepository.update(existingUser);
 
         return existingUser;
     }
 
-    // Retrieves a user using an email address
+    // Retrieves a user using email
+    @Cacheable(
+            value = "users",
+            key = "'email:' + #email")
     public User getUserByEmail(final String email) {
 
-        String cleanEmail = stringUtil.cleanEmail(email);
-        User user = memoryRepository.findByEmail(cleanEmail);
+        final String cleanEmail =
+                stringUtil.cleanEmail(email);
 
-        if (user == null) {
-            user = jdbcRepository.findByEmail(cleanEmail);
-        }
-        return user;
+        return repository.findByEmail(cleanEmail);
     }
 
     // Retrieves all users
     public Collection<User> findAll() {
 
-        return jdbcRepository.findAll();
+        return repository.findAll();
+    }
+
+    // Retrieves user by id
+    @Cacheable(
+            value = "users",
+            key = "'id:' + #userId")
+    public User findById(final Integer userId) {
+
+        Objects.requireNonNull(
+                userId,
+                "User ID cannot be null.");
+
+        return repository.findById(userId);
     }
 
     // Updates user information
+    @CachePut(
+            value = "users",
+            key = "'id:' + #user.id")
     public boolean update(final User user) {
 
-        if (user == null) {
-            throw new NullPointerException("User cannot be null.");
-        }
+        Objects.requireNonNull(
+                user,
+                "User cannot be null.");
 
-        user.setUpdatedAt(LocalDateTime.now());
-
-        return memoryRepository.update(user) && jdbcRepository.update(user);
+        return repository.update(user);
     }
 
     // Deletes a user
+    @CacheEvict(
+            value = "users",
+            key = "'id:' + #userId")
     public boolean delete(final Integer userId) {
 
-        User user = jdbcRepository.findById(userId);
+        Objects.requireNonNull(
+                userId,
+                "User ID cannot be null.");
+
+        final User user =
+                repository.findById(userId);
 
         if (user == null) {
-            throw new ResourceNotFoundException("User not found.");
+            throw new ResourceNotFoundException(
+                    "User not found.");
         }
-        return memoryRepository.delete(userId) && jdbcRepository.delete(userId);
+
+        return repository.delete(userId);
     }
 }

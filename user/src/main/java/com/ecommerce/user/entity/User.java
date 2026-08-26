@@ -11,29 +11,25 @@
 package com.ecommerce.user.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.ecommerce.common.enums.Role;
 import com.ecommerce.common.validation.CreateGroup;
 import com.ecommerce.common.validation.UpdateGroup;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,7 +39,7 @@ import jakarta.validation.constraints.Size;
 
 // Represents a user
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -161,7 +157,7 @@ public class User implements Serializable {
                     UpdateGroup.class
             }
     )
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = RoleConverter.class)
     @Column(nullable = false)
     private Role role;
 
@@ -213,82 +209,66 @@ public class User implements Serializable {
     }
 
     public Integer getId() {
-
         return id;
     }
 
     public void setId(final Integer id) {
-
         this.id = id;
     }
 
     public String getName() {
-
         return name;
     }
 
     public void setName(final String name) {
-
         this.name = name;
     }
 
     public String getEmail() {
-
         return email;
     }
 
     public void setEmail(final String email) {
-
         this.email = email;
     }
 
     public String getPassword() {
-
         return password;
     }
 
     public void setPassword(final String password) {
-
         this.password = password;
     }
 
     public Role getRole() {
-
         return role;
     }
 
     public void setRole(final Role role) {
-
         this.role = role;
     }
 
     public LocalDateTime getCreatedAt() {
-
         return createdAt;
     }
 
     public void setCreatedAt(final LocalDateTime createdAt) {
-
         this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
-
         return updatedAt;
     }
 
     public void setUpdatedAt(final LocalDateTime updatedAt) {
-
         this.updatedAt = updatedAt;
     }
 
     public LocalDateTime getLastLoginAt() {
-
         return lastLoginAt;
     }
 
     public void setLastLoginAt(final LocalDateTime lastLoginAt) {
-
         this.lastLoginAt = lastLoginAt;
     }
 
@@ -313,5 +293,34 @@ public class User implements Serializable {
                 + ", lastLoginAt="
                 + lastLoginAt
                 + '}';
+    }
+
+    /*
+     * Converts Role enum values to database integer values
+     * and database integer values back to Role enum values.
+     */
+    @Converter
+    public static class RoleConverter
+            implements AttributeConverter<Role, Integer> {
+
+        @Override
+        public Integer convertToDatabaseColumn(final Role role) {
+
+            if (role == null) {
+                return null;
+            }
+
+            return role.getId();
+        }
+
+        @Override
+        public Role convertToEntityAttribute(final Integer id) {
+
+            if (id == null) {
+                return null;
+            }
+
+            return Role.fromId(id);
+        }
     }
 }

@@ -12,7 +12,6 @@
 package com.ecommerce.review.mapper;
 
 import org.springframework.stereotype.Component;
-
 import com.ecommerce.review.dto.ReviewRequestDto;
 import com.ecommerce.review.dto.ReviewResponseDto;
 import com.ecommerce.review.dto.ReviewUpdateDto;
@@ -26,30 +25,25 @@ public class ReviewMapper {
         if (reviewRequestDto == null) {
             return null;
         }
-
         Review review = new Review();
         review.setUserId(reviewRequestDto.getUserId());
         review.setProductId(reviewRequestDto.getProductId());
         review.setRating(reviewRequestDto.getRating());
         review.setComment(reviewRequestDto.getComment());
         review.setReplyToReviewId(reviewRequestDto.getReplyToReviewId());
-
         return review;
     }
 
-    public Review toEntity(
-            final ReviewUpdateDto reviewUpdateDto) {
+    public Review toEntity(final ReviewUpdateDto reviewUpdateDto) {
 
         if (reviewUpdateDto == null) {
             return null;
         }
-
         Review review = new Review();
         review.setReviewId(reviewUpdateDto.getReviewId());
         review.setRating(reviewUpdateDto.getRating());
         review.setComment(reviewUpdateDto.getComment());
         review.setReplyToReviewId(reviewUpdateDto.getReplyToReviewId());
-
         return review;
     }
 
@@ -58,7 +52,6 @@ public class ReviewMapper {
         if (review == null) {
             return null;
         }
-
         ReviewResponseDto responseDto = new ReviewResponseDto();
         responseDto.setReviewId(review.getReviewId());
         responseDto.setUserId(review.getUserId());
@@ -66,7 +59,6 @@ public class ReviewMapper {
         responseDto.setRating(review.getRating());
         responseDto.setComment(review.getComment());
         responseDto.setReplyToReviewId(review.getReplyToReviewId());
-
         return responseDto;
     }
 }

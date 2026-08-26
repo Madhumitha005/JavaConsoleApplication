@@ -13,7 +13,7 @@
         <groupId>com.ecommerce</groupId>
         <artifactId>ecommerce-parent</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../../../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
 
     </parent>
 
@@ -22,9 +22,11 @@
     <dependencies>
 
         <!-- Controller -->
+
+        <!-- Spring Cache -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
 
         <!-- Service -->

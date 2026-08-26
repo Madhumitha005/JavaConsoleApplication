@@ -11,7 +11,6 @@
 package com.ecommerce.category.mapper;
 
 import org.springframework.stereotype.Component;
-
 import com.ecommerce.category.dto.CategoryRequestDto;
 import com.ecommerce.category.dto.CategoryResponseDto;
 import com.ecommerce.category.dto.CategoryUpdateDto;
@@ -19,7 +18,7 @@ import com.ecommerce.category.entity.Category;
 
 /**
  * Converts Category entities into DTO objects
- * and DTO objects into Category entities.
+ * and DTO objects into Category entities
  */
 @Component
 public class CategoryMapper {
@@ -28,10 +27,8 @@ public class CategoryMapper {
     public Category toEntity(final CategoryRequestDto requestDto) {
 
         if (requestDto == null) {
-
             return null;
         }
-
         Category category = new Category();
         category.setCategoryName(requestDto.getCategoryName());
         return category;
@@ -41,14 +38,10 @@ public class CategoryMapper {
     public Category toEntity(final CategoryUpdateDto updateDto) {
 
         if (updateDto == null) {
-
             return null;
         }
-
         Category category = new Category();
-        category.setCategoryId(updateDto.getCategoryId());
         category.setCategoryName(updateDto.getCategoryName());
-
         return category;
     }
 
@@ -56,14 +49,11 @@ public class CategoryMapper {
     public CategoryResponseDto toResponseDto(final Category category) {
 
         if (category == null) {
-
             return null;
         }
-
         CategoryResponseDto responseDto = new CategoryResponseDto();
         responseDto.setCategoryId(category.getCategoryId());
         responseDto.setCategoryName(category.getCategoryName());
-
         return responseDto;
     }
 }
