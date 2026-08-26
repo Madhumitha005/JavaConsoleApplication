@@ -1,41 +1,50 @@
-  services:
-    postgres:
-      image: postgres:17-alpine
-      container_name: ecommerce-postgres
-      environment:
-        POSTGRES_DB: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: Madhu@2005
-      ports:
-        - "5432:5432"
-      volumes:
-        - postgres-data:/var/lib/postgresql/data
+services:
 
-    redis:
-      image: redis:7-alpine
-      container_name: ecommerce-redis
-      ports:
-        - "6379:6379"
-      volumes:
-        - redis-data:/data
+  postgres:
+    image: postgres:17-alpine
+    container_name: ecommerce-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Madhu@2005
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    mem_limit: 1g
 
-    app:
-      build:
-        context: .
-        dockerfile: Dockerfile
-      container_name: ecommerce-app
-      ports:
-        - "8081:8081"
-      environment:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
-        SPRING_DATASOURCE_USERNAME: postgres
-        SPRING_DATASOURCE_PASSWORD: Madhu@2005
-        SPRING_DATA_REDIS_HOST: redis
-        SPRING_DATA_REDIS_PORT: 6379
-      depends_on:
-        - postgres
-        - redis
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 200mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    mem_limit: 256m
 
-  volumes:
-    postgres-data:
-    redis-data:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-app
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Madhu@2005
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+    depends_on:
+      - postgres
+      - redis
+    mem_limit: 512m
+
+volumes:
+  postgres-data:
+  redis-data:
